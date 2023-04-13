@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
     <link rel="stylesheet" href="./assets/css/consola.css">
     <link rel="stylesheet" href="./Backend-JS/AST/ClasesArbolAST/ArbolAst.css ">
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
     <title>Document</title>
 </head>
 <body>
@@ -30,19 +31,27 @@
             </div>
           </div>          
       </div>
+      <div class="row justify-content-md-center">
+        <div class="col-12">
+          <div _ngcontent-pyl-c58="" id="graph-container" name="graph-container" style="text-align: center">
+                
+          </div>
+        </div>
+        
+      </div> 
       
   <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   <script src="./assets/js/funcionesHtml.js"></script>
   <script src="./Backend-JS/AST/ClasesArbolAST/ArbolAst.js"></script>
-  <script src="./Backend-JS/AST/ClasesArbolAST/ErrorNode.js"></script
+  <script src="./Backend-JS/AST/ClasesArbolAST/ErrorNode.js"></script>
+  <script src="./Backend-JS/AST/ClasesArbolAST/TableReport.js"></script>
   <script src="./Backend-JS/AST/GramaticaAST.js"></script>
   <script>
     Fuente=document.getElementById('input');
     document.getElementById('btn-compile').onclick = function(){
-      var Codigo = Fuente.getValue();
-      
+      var Codigo = Fuente.value;
       arbolast(Codigo);
     }
 
