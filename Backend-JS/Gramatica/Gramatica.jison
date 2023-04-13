@@ -1,5 +1,5 @@
 %lex
-
+//AREA LEXICA
 %options case-sensitive
 identificador   [A-Za-z_\ñ\Ñ][A-Za-z_0-9\ñ\Ñ]*
 
@@ -24,15 +24,15 @@ identificador   [A-Za-z_\ñ\Ñ][A-Za-z_0-9\ñ\Ñ]*
 "print"			    		return "Rprint";
 
 // Simbolos Generales
-"("                 return 'PAROP';
-")"                 return 'PARCLS';
+"("                 return 'PARABRE';
+")"                 return 'PARCIERRA';
 ";"                 return 'PTOCOMA';
 ","                 return 'COMA';
 ":"                 return 'DOSPTOS';
-"["                 return 'COROP';
-"]"                 return 'CORCLS';
-"{"                 return 'KEYOP';
-"}"                 return 'KEYCLS';
+"["                 return 'CORABRE';
+"]"                 return 'CORCIERRA';
+"{"                 return 'LLAVEA';
+"}"                 return 'LLAVEC';
 "."                 return 'PTO';
 
 // Simbolos Aritmeticos
@@ -86,15 +86,14 @@ identificador   [A-Za-z_\ñ\Ñ][A-Za-z_0-9\ñ\Ñ]*
 "return"            return 'RETURN';
 "continue"          return 'CONTINUE';
 
+//Funciones
 "toUppercase"       return 'TOUPPER';
 "toLowercase"       return 'TOLOWER';
-"subString"         return 'SUBSTR';
 "length"            return 'LENGTH';
-"caracterOfPosition" return 'CARACTERPOSC';
-"push"              return 'PUSH';
-"pop"               return 'POP';
-"struct"            return 'STRUCT'
-"parse"             return 'PARSE';
+"toCharArray"            return 'CHARARRAY'
+"Typeof"             return 'TYPEOF';
+"truncate"             return 'TRUNCATE';
+"round"             return 'ROUND';
 
 {identificador} return 'ID'
 
@@ -106,7 +105,7 @@ identificador   [A-Za-z_\ñ\Ñ][A-Za-z_0-9\ñ\Ñ]*
 /lex
 
 // Precedencia de Operaciones
-%right UMENOS
+%right '-'
 %left '^'
 %left '*' '/'
 %left '+' '-'
@@ -117,7 +116,7 @@ identificador   [A-Za-z_\ñ\Ñ][A-Za-z_0-9\ñ\Ñ]*
 %left '&'
 %left '%'
 %right '++' '--'
-%left 'PAROP' 'PARCLS'
+%left 'PARABRE' 'PARCIERRA'
 
 %left 'EOF'
 
@@ -125,7 +124,8 @@ identificador   [A-Za-z_\ñ\Ñ][A-Za-z_0-9\ñ\Ñ]*
 
 %ebnf
 
-%% /* Definición de la gramática */
+%% 
+// Gramatica
 
 INIT: SENTENCES EOF             {  return $1; }
     | EOF
