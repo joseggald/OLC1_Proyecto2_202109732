@@ -127,6 +127,53 @@ identificador   [A-Za-z_\ñ\Ñ][A-Za-z_0-9\ñ\Ñ]*
 %% 
 // Gramatica
 
-INIT: SENTENCES EOF             {  return $1; }
-    | EOF
+INIT: SENTENCES EOF           
+    | EOF                      
+;
+
+SENTENCES
+  : SENTENCES SENTENCE          
+  | SENTENCE                    
+;
+
+SENTENCE
+  : PRINT                        
+  | DECLARATION PTOCOMA     {   console.log($1.node+" "+$2);    }        
+  | error PTOCOMA               
+  | error KEYCLS                
+;
+
+PRINT
+  : Rprint PARABRE EXP_PRINT PARCIERRA PTOCOMA		  
+;
+
+EXP_PRINT
+  : EXP '+' EXP    {console.log("funciona");}                          
+  | PRIMITIVO      {console.log("funciona");} 
+  | ID                                
+;
+
+PRIMITIVO
+  : nullVal        
+  | intVal        
+  | doubleVal      
+  | charVal         
+  | stringVal      
+  | trueVal         
+  | falseVal        
+;
+
+DECLARATION
+  : TIPO ID                    { console.log($1.node+" "+$2) }
+  | TIPO ID '=' PRIMITIVO                    { console.log($1.node+" "+$2+" "+$3+" "+$4.node) }
+;
+
+
+TIPO
+  : INT                                       { console.log("int"); }
+  | DOUBLE                                    { console.log("double"); }
+  | BOOLEAN                                   { console.log("bool"); }
+  | STRING                                    { console.log("string"); }
+  | CHAR                                      { console.log("char"); }
+  | VOID                                      { console.log("void"); }
 ;

@@ -13,7 +13,7 @@
     <div class="container">
         <div class="row mb-3">
           <div class="col-md-12">
-            <button id="btn-compile" class="btn btn-primary">Compilar</button>
+            <button id="btn-compile" class="btn btn-primary" onclick=Compilar()>Compilar</button>
             <button id="btn-clear" class="btn btn-secondary">Limpiar</button>
             <input type="file" id="btn-upload" class="btn btn-info" style="display: none;">
             <label for="btn-upload" id="lbl-upload" class="btn btn-info">Subir archivo</label>
@@ -44,68 +44,15 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
   <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
   <script src="./assets/js/funcionesHtml.js"></script>
+  
   <script src="./Backend-JS/AST/ClasesArbolAST/ArbolAst.js"></script>
   <script src="./Backend-JS/AST/ClasesArbolAST/ErrorNode.js"></script>
   <script src="./Backend-JS/AST/ClasesArbolAST/TableReport.js"></script>
   <script src="./Backend-JS/AST/GramaticaAST.js"></script>
-  <script>
-    Fuente=document.getElementById('input');
-    document.getElementById('btn-compile').onclick = function(){
-      var Codigo = Fuente.value;
-      arbolast(Codigo);
-    }
 
-    function arbolast(content){
-      treeData = [];
-      if (document.getElementById("grafo")) {
-        document.getElementById("grafo").remove();
-      }
-      var result = GramaticaAST.parse(content);
-      generateTree([result.node]);
-    }
-
-    function newNode(yy, state, ...nodes) {
-      const parent = getNonTerminal(yy, state);
-      const children = [];
-            
-      for (let node of nodes) {
-        node.parent = node.parent ? node.parent : parent;
-        if (node.parent == parent) {
-          children.push(node);
-        } else if (typeof node == 'string') {
-          children.push({
-            name: node,
-            parent,
-            children: []
-          });
-        } else {
-          children.push({
-            name: node.parent,
-            parent,
-            children: [node]
-          });
-        }
-      }               
-
-      return {
-        name: parent,
-        parent: null,
-        children
-      }
-    }
-
-    function getNonTerminal(yy, state) {
-      const simbolos = yy.parser.symbols_;
-      const produccion = yy.parser.productions_[state];
-      let nonTerminal = '';
-      for (let sim in simbolos) {
-        if (simbolos[sim] === produccion[0]) {
-          nonTerminal = sim;
-           break;
-        }
-      }
-      return nonTerminal;
-    }
-  </script>
+  <script src="./Backend-JS/Gramatica/Gramatica.js"></script>
+  <script src="./Backend-JS/AppFunciones/app.js"></script>
+  
+  
 </body>
 </html>
