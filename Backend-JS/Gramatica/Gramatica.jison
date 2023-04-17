@@ -16,7 +16,7 @@ identificador   [A-Za-z_\ñ\Ñ][A-Za-z_0-9\ñ\Ñ]*
 "true"			    	              return "trueVal";
 "false"			    	              return "falseVal";
 [0-9]+("."[0-9]+)+\b            return "decimalVal";
-[0-9]+\b                        return "enteroVal";
+[0-9]+\b                        return "intVal";
 \"((\\\")|[^\n\"])*\"           { yytext = yytext.substr(1,yyleng-2); return 'stringVal'; }
 \'((\\\')|[^\n\'])*\'	        	{ yytext = yytext.substr(1,yyleng-2); return 'charVal'; }
 
@@ -36,31 +36,32 @@ identificador   [A-Za-z_\ñ\Ñ][A-Za-z_0-9\ñ\Ñ]*
 "."                 return 'PTO';
 
 // Simbolos Aritmeticos
-"+"                 return '+';
-"-"                 return '-';
-"*"                 return '*';
-"^"                 return '^';
-"/"                 return '/';
-"%"                 return '%';
-"?"                 return '?';
-"#"                 return '#';
-
+"+"                 return MAS;
+"-"                 return MENOS;
+"*"                 return POR;
+"^"                 return NOTA;
+"/"                 return BARRA;
+"%"                 return PORCE;
+"?"                 return SGP;
+"#"                 return NUMERAL;
+"++"                return MASMAS;
+"--"                return MENOSMENOS;
 // Operadores Relacionales
-">="                return '>=';
-">"                 return '>';
-"<="                return '<=';
-"<"                 return '<';
+">="                return MAYIGUAL;
+">"                 return MAYOR;
+"<="                return MENIGUAL;
+"<"                 return MENOR;
 
 // Operadores de Comparacion
-"=="                return '==';
-"!="                return '!=';
-"="                 return '=';
+"=="                return IGUALIGUAL;
+"!="                return DIFER;
+"="                 return IGUAL;
 
 // Operadores Logicos
-"&&"                return '&&';
-"&"                 return '&';
-"||"                return '||';
-"!"                 return '!';
+"&&"                return Y_DOS;
+"&"                 return Y_UNO;
+"||"                return OR;
+"!"                 return EXCLA;
 
 // PALABRAS RESERVADAS
 // Tipos de datos
@@ -105,17 +106,17 @@ identificador   [A-Za-z_\ñ\Ñ][A-Za-z_0-9\ñ\Ñ]*
 /lex
 
 // Precedencia de Operaciones
-%right '-'
-%left '^'
-%left '*' '/'
-%left '+' '-'
-%left '==' '!=' '<' '<=' '>' '>='
-%left '&&'
-%left '||'
-%left '?'
-%left '&'
-%left '%'
-%right '++' '--'
+%right 'MENOS'
+%left 'NOTA'
+%left 'POR' 'BARRA'
+%left 'MAS' 'MENOS'
+%left 'IGUALIGUAL' 'DIFER' 'MENOR' 'MENIGUAL' 'MAYOR' 'MAYIGUAL'
+%left 'Y_DOS'
+%left 'OR'
+%left 'SGP'
+%left 'Y_UNO'
+%left 'PORCE'
+%right 'MASMAS' 'MENOSMENOS'
 %left 'PARABRE' 'PARCIERRA'
 
 %left 'EOF'
@@ -127,36 +128,37 @@ identificador   [A-Za-z_\ñ\Ñ][A-Za-z_0-9\ñ\Ñ]*
 %% 
 // Gramatica
 
-INIT: SENTENCES EOF           
+INIT: SENTENCES EOF       {return $1}          
     | EOF                      
 ;
 
 SENTENCES
-  : SENTENCES SENTENCE          
-  | SENTENCE                    
+  : SENTENCES SENTENCE    { $1.push($2); $$=$1; }       
+  | SENTENCE              { $$ = $1; }                 
 ;
 
 SENTENCE
-  : PRINT                        
-  | DECLARATION PTOCOMA     {   console.log($1.node+" "+$2);    }        
-  | error PTOCOMA               
-  | error KEYCLS                
+  : PRINT                    { $$ = $1;  }   
+  | DECLARATION      {   $$ = $1;    }   
+  | ASIGNACION     {   $$ = $1;    }      
+  | error PTOCOMA           {   console.log("Error");    }             
+  | error KEYCLS            {   console.log("Error");    }        
 ;
 
 PRINT
-  : Rprint PARABRE EXP_PRINT PARCIERRA PTOCOMA		  
+  : Rprint PARABRE EXP_PRINT PARCIERRA PTOCOMA    {$$ = new Print(@1.first_line, @1.first_column,$3)}		  
 ;
 
 EXP_PRINT
-  : EXP '+' EXP    {console.log("funciona");}                          
+  : EXP_PRINT MAS EXP_PRINT  {console.log("funciona");}                          
   | PRIMITIVO      {console.log("funciona");} 
-  | ID                                
+  | ID          {console.log("funciona");}                       
 ;
 
 PRIMITIVO
   : nullVal        
   | intVal        
-  | doubleVal      
+  | decimalVal      
   | charVal         
   | stringVal      
   | trueVal         
@@ -164,16 +166,25 @@ PRIMITIVO
 ;
 
 DECLARATION
-  : TIPO ID                    { console.log($1.node+" "+$2) }
-  | TIPO ID '=' PRIMITIVO                    { console.log($1.node+" "+$2+" "+$3+" "+$4.node) }
+  : TIPO ID PTOCOMA                   { $$ = new Declarar($2,$1,null,@1.first_line, @1.first_column ); }
+  | TIPO ID IGUAL PRIMITIVO PTOCOMA                  { $$ = new Declarar($2,$1,$4,@1.first_line, @1.first_column ); }
 ;
 
+ASIGNACION
+  : ID IGUAL EXP_ASGPTOCOMA
+;
+
+EXP_ASG 
+  : PRIMITIVO                                 
+  | EXP_ASG MAS EXP_ASG                       
+  | ID                                        { console.log($1); }
+;
 
 TIPO
-  : INT                                       { console.log("int"); }
-  | DOUBLE                                    { console.log("double"); }
-  | BOOLEAN                                   { console.log("bool"); }
-  | STRING                                    { console.log("string"); }
-  | CHAR                                      { console.log("char"); }
-  | VOID                                      { console.log("void"); }
+  : INT                                       { $$ = new Primitivo(@1.first_line, @1.first_column,$1,Type.INT); }
+  | DOUBLE                                    { $$ = new Primitivo(@1.first_line, @1.first_column,$1,Type.DOUBLE); }
+  | BOOLEAN                                   { $$ = new Primitivo(@1.first_line, @1.first_column,$1,Type.BOOLEAN); }
+  | STRING                                    { $$ = new Primitivo(@1.first_line, @1.first_column,$1,Type.STRING); }
+  | CHAR                                      { $$ = new Primitivo(@1.first_line, @1.first_column,$1,Type.CHAR); }
+  | VOID                                      { $$ = new Primitivo(@1.first_line, @1.first_column,$1,Type.VOID); }
 ;
