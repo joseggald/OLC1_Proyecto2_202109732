@@ -44,9 +44,9 @@ export class Ambito {
         let e: Ambito = this;
         while (e != null) {
             try {
-                const array= e.tabla_arreglos.get(id);
-                if (array != null) {
-                    return array as Arreglo;
+                const variable = e.tabla_arreglos.get(id);
+                if (variable != null) {
+                    return variable as Arreglo;
                 }
             } catch (error) {
                 console.log(error);

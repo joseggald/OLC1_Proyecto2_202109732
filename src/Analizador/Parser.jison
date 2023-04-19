@@ -9,6 +9,7 @@
     let If                          =   require("../Instrucciones/If").If;
     let Parametro                   =   require("../Instrucciones/Parametro").Parametro;
     let AccesoVariable              =   require("../Expresiones/AccesoVariable").AccesoVariable;
+    let AccesoVector                =   require("../Expresiones/AccesoVector").AccesoVector;
     let LlamadaFuncion              =   require("../Expresiones/LlamadaFuncion").LlamadaFuncion;
     let OperacionAritmetica         =   require("../Expresiones/OperacionAritmetica").OperacionAritmetica;
     let OperacionLogica             =   require("../Expresiones/OperacionLogica").OperacionLogica;
@@ -277,6 +278,7 @@ EXP :   EXP '+' EXP                     { $$ = new OperacionAritmetica($1, $2, $
     |   EXP '&&'  EXP                   { $$ = new OperacionLogica($1, $2, $3, @2.first_line, @2.first_column);}
     |   EXP '||'  EXP                   { $$ = new OperacionLogica($1, $2, $3, @2.first_line, @2.first_column);}
     |   id                              { $$ = new AccesoVariable($1, @1.first_line, @1.first_column);        }
+    |   id '[' EXP ']'                    { $$ = new AccesoVector($1, $3,@1.first_line, @1.first_column);        }
     |   LLAMADA_FUNCION                 { $$ = $1; }
     |   entero                          { $$ = new Valor($1, "integer", @1.first_line, @1.first_column);}
     |   decimal                         { $$ = new Valor($1, "double", @1.first_line, @1.first_column); }

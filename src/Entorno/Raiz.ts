@@ -52,8 +52,6 @@ export class Raiz {
     }
 
     private ejecutarDeclaracionesFunciones(actual :Ambito, global :Ambito, ast:AST){
-
-        
         for(let x = 0; x < this.sentencias.length ; x++)
         {
             let sent = this.sentencias[x];

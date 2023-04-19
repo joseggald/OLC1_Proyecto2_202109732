@@ -18,7 +18,7 @@ export class Print extends Instruccion
         if(this.lista_exp.length == 1) {
             let exp: Expresion = this.lista_exp[0];
             let res = exp.getValor(actual, global, ast);
-            ast.escribirConsola(res.toString());
+            ast.escribirConsola(res);
         } else {
             //TODO COLOCAR ERROR
         }
