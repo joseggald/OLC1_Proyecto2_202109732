@@ -4,6 +4,7 @@
     let TipoPrimitivo               =   require("../Entorno/Simbolos/TipoPrimitivo").TipoPrimitivo;
     let DeclararVariable            =   require("../Instrucciones/DeclararVariable").DeclararVariable; 
     let DeclararFuncion             =   require("../Instrucciones/DeclararFuncion").DeclararFuncion;
+    let DeclararArreglo             =   require("../Instrucciones/DeclararArreglo").DeclararArreglo;
     let Asignacion                  =   require("../Instrucciones/Asignacion").Asignacion;
     let If                          =   require("../Instrucciones/If").If;
     let Parametro                   =   require("../Instrucciones/Parametro").Parametro;
@@ -50,6 +51,7 @@ frac                        (?:\.[0-9]+)
 "else"                          {   return 'telse';     }
 "void"                          {   return 'tvoid';     }
 "return"                        {   return 'treturn';   }
+"new"                          {   return 'tnew';     }
 
 /* =================== EXPRESIONES REGULARES ===================== */
 ([a-zA-ZÑñ]|("_"[a-zA-ZÑñ]))([a-zA-ZÑñ]|[0-9]|"_")*             yytext = yytext.toLowerCase();          return 'id';
@@ -84,7 +86,9 @@ frac                        (?:\.[0-9]+)
 "<"                             {return '<';}
 "{"                             {return '{';}
 "}"                             {return '}';}
-
+"["                             {return '[';}
+"]"                             {return ']';}
+digit                           {return 'num';}
 .                               {}
 
 
@@ -158,6 +162,14 @@ DECLARACION : TIPO  id  '=' EXP
             | TIPO  id  
             {
                 $$ = new DeclararVariable($1, $2, undefined, @2.first_line, @2.first_column);
+            }
+            | TIPO '[' ']' id '=' tnew TIPO '[' entero ']' 
+            {
+                $$ = new DeclararArreglo($1, $4, $7,undefined, $9, @2.first_line, @2.first_column);
+            }
+            | TIPO '[' ']' id '=' '{' LISTA_EXP '}' 
+            {
+                $$ = new DeclararArreglo($1, $4,undefined, $7,undefined, @2.first_line, @2.first_column);
             }
 ;
 

@@ -16,12 +16,10 @@ export class Print extends Instruccion
 
     public ejecutar(actual: Ambito, global: Ambito, ast: AST) {
         if(this.lista_exp.length == 1) {
-
             let exp: Expresion = this.lista_exp[0];
             let res = exp.getValor(actual, global, ast);
             ast.escribirConsola(res.toString());
-        } else 
-        {
+        } else {
             //TODO COLOCAR ERROR
         }
     }
