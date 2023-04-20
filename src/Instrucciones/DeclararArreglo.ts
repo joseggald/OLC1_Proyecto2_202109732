@@ -32,32 +32,61 @@ export class DeclararArreglo extends Instruccion{
             // * ERROR *
             throw new Error("Arreglo ya se encuentra definida en el entorno actual: " + this.linea + " , " + this.columna);
         }
-        if(this.ctipo==undefined){
-            let pr;
+        if(this.ctipo == undefined){
             if(this.tipo.getPrimitivo() === TipoPrimitivo.Integer){
                 let array: Expresion[] = [];
                 for(let i = 0; i<this.objetos.length; i++) {
-                    if(Number.isInteger(this.objetos[i].getValor(actual, global, ast))){
+                    if((thiNumber.isIntegers.objetos[i].getValor(actual, global, ast))){
                         array[i]=this.objetos[i].getValor(actual, global, ast);
                         console.log(array[i]);  
                     }else{
-                        console.log("Error");  
+                        throw new Error("Datos del arreglo no coinciden con el tipo de vecto definido" + this.linea + " , " + this.columna);
                     }
                 }
                 let nuevo_arr=new Arreglo(this.tipo,this.id,this.ctipo,array);
                 actual.insertarArreglo(this.id,nuevo_arr);    
             }else if(this.tipo.getPrimitivo() === TipoPrimitivo.Double){
-                pr = 0.0;
+                let array: Expresion[] = [];
+                for(let i = 0; i<this.objetos.length; i++) {
+                    if(Number.isInteger(this.objetos[i].getValor(actual, global, ast)) && typeof this.objetos[i].getValor(actual, global, ast) === 'string'){
+                        throw new Error("Datos del arreglo no coinciden con el tipo de vecto definido" + this.linea + " , " + this.columna);
+                    }else{
+                        array[i]=this.objetos[i].getValor(actual, global, ast);
+                        console.log(array[i]);      
+                    }
+                }
+                let nuevo_arr=new Arreglo(this.tipo,this.id,this.ctipo,array);
+                actual.insertarArreglo(this.id,nuevo_arr);
             } else if(this.tipo.getPrimitivo() === TipoPrimitivo.String) {
-                pr = "";
+                let array: Expresion[] = [];
+                for(let i = 0; i<this.objetos.length; i++) {
+                    if(typeof this.objetos[i].getValor(actual, global, ast) === 'string'){
+                        array[i]=this.objetos[i].getValor(actual, global, ast);
+                        console.log(array[i]);  
+                    }else{
+                        throw new Error("Datos del arreglo no coinciden con el tipo de vecto definido" + this.linea + " , " + this.columna);           
+                    }
+                }
+                let nuevo_arr=new Arreglo(this.tipo,this.id,this.ctipo,array);
+                actual.insertarArreglo(this.id,nuevo_arr);
             } else if(this.tipo.getPrimitivo() === TipoPrimitivo.String) {
-                pr = "";
+                let array: Expresion[] = [];
+                for(let i = 0; i<this.objetos.length; i++) {
+                    if(typeof this.objetos[i].getValor(actual, global, ast) === 'string'){
+                        array[i]=this.objetos[i].getValor(actual, global, ast);
+                        console.log(array[i]);  
+                    }else{
+                        throw new Error("Datos del arreglo no coinciden con el tipo de vecto definido" + this.linea + " , " + this.columna);           
+                    }
+                }
+                let nuevo_arr=new Arreglo(this.tipo,this.id,this.ctipo,array);
+                actual.insertarArreglo(this.id,nuevo_arr);
             }
-        }else if(this.ctipo===this.tipo){
+        }else if(this.ctipo.getPrimitivo()===this.tipo.getPrimitivo()){
             console.log(this.tam);
             let array: Expresion[] =  new Array(this.tam);
             let nuevo_arr=new Arreglo(this.tipo,this.id,this.ctipo,array);
-                actual.insertarArreglo(this.id,nuevo_arr);
+            actual.insertarArreglo(this.id,nuevo_arr);
         }else if(this.ctipo!=this.tipo && this.ctipo!=undefined){
             throw new Error("Arreglo mal definido en el entorno actual: " + this.linea + " , " + this.columna);
         }

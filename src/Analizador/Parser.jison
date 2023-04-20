@@ -6,6 +6,7 @@
     let DeclararFuncion             =   require("../Instrucciones/DeclararFuncion").DeclararFuncion;
     let DeclararArreglo             =   require("../Instrucciones/DeclararArreglo").DeclararArreglo;
     let Asignacion                  =   require("../Instrucciones/Asignacion").Asignacion;
+    let AsignacionVector            =   require("../Instrucciones/AsignacionVector").AsignacionVector;
     let If                          =   require("../Instrucciones/If").If;
     let Parametro                   =   require("../Instrucciones/Parametro").Parametro;
     let AccesoVariable              =   require("../Expresiones/AccesoVariable").AccesoVariable;
@@ -151,6 +152,7 @@ BLOQUE_SENTENCAS : '{' SENTENCIAS '}'
 SENTENCIA :     DECLARACION ';'             { $$ = $1; }
             |   FUNCION                     { $$ = $1; }
             |   ASIGNACION                  { $$ = $1; }
+            |   VECTOR_ADD                  { $$ = $1; }
             |   IF                          { $$ = $1; }
             |   LLAMADA_FUNCION  ';'        { $$ = $1; }
             |   WHILE                       { $$ = $1; }
@@ -177,6 +179,12 @@ DECLARACION : TIPO  id  '=' EXP
 ASIGNACION  :    id '=' EXP ';'
             {
                 $$ = new Asignacion($1, $3, @1.first_line, @1.first_column);
+            }
+;
+
+VECTOR_ADD  :   id '[' entero ']' '=' EXP ';'
+            {
+                $$ = new AsignacionVector($1, $6, $3,@1.first_line, @1.first_column);
             }
 ;
 
@@ -269,6 +277,7 @@ EXP :   EXP '+' EXP                     { $$ = new OperacionAritmetica($1, $2, $
     |   EXP '/' EXP                     { $$ = new OperacionAritmetica($1, $2, $3, @2.first_line, @2.first_column);}
     |   '-' EXP %prec negativo          { $$ = $2;}
     |   '(' EXP ')'                     { $$ = $2;}
+    |   EXP '++'                     { $$ = $2;}
     |   EXP '=='  EXP                   { $$ = new OperacionRelacional($1, $2, $3, @2.first_line, @2.first_column);}
     |   EXP '!='  EXP                   { $$ = new OperacionRelacional($1, $2, $3, @2.first_line, @2.first_column);}
     |   EXP '<'   EXP                   { $$ = new OperacionRelacional($1, $2, $3, @2.first_line, @2.first_column);}
@@ -278,7 +287,7 @@ EXP :   EXP '+' EXP                     { $$ = new OperacionAritmetica($1, $2, $
     |   EXP '&&'  EXP                   { $$ = new OperacionLogica($1, $2, $3, @2.first_line, @2.first_column);}
     |   EXP '||'  EXP                   { $$ = new OperacionLogica($1, $2, $3, @2.first_line, @2.first_column);}
     |   id                              { $$ = new AccesoVariable($1, @1.first_line, @1.first_column);        }
-    |   id '[' EXP ']'                    { $$ = new AccesoVector($1, $3,@1.first_line, @1.first_column);        }
+    |   id '[' EXP ']'                  { $$ = new AccesoVector($1, $3,@1.first_line, @1.first_column);        }
     |   LLAMADA_FUNCION                 { $$ = $1; }
     |   entero                          { $$ = new Valor($1, "integer", @1.first_line, @1.first_column);}
     |   decimal                         { $$ = new Valor($1, "double", @1.first_line, @1.first_column); }

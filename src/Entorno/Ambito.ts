@@ -40,6 +40,7 @@ export class Ambito {
         }
         return undefined;
     }
+    
     public getVector(id :string): Arreglo {
         let e: Ambito = this;
         while (e != null) {
