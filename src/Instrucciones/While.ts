@@ -3,6 +3,7 @@ import { AST } from "../Entorno/AST";
 import { Expresion } from "../Entorno/Expresion";
 import { Instruccion } from "../Entorno/Instruccion";
 import { Nodo } from "../Entorno/Nodo";
+import { Return } from "./Return";
 
 export class While extends Instruccion{
     
@@ -22,8 +23,15 @@ export class While extends Instruccion{
        while(val_cond) 
        {
             for(let sentencia of this.sentencias){
-                if(sentencia instanceof Instruccion) sentencia.ejecutar(ambito_local, global, ast);
+                
+                if(sentencia instanceof Instruccion) {
+                    sentencia.ejecutar(ambito_local, global, ast);
+                    if(sentencia instanceof Return){
+                        return;
+                    }
+                }
                 if(sentencia instanceof Expresion) sentencia.getValor(ambito_local, global, ast);
+                
             }
             val_cond = this.exp.getValor(actual, global, ast);
        }

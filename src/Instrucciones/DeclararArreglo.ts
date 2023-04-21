@@ -36,7 +36,7 @@ export class DeclararArreglo extends Instruccion{
             if(this.tipo.getPrimitivo() === TipoPrimitivo.Integer){
                 let array: Expresion[] = [];
                 for(let i = 0; i<this.objetos.length; i++) {
-                    if((thiNumber.isIntegers.objetos[i].getValor(actual, global, ast))){
+                    if((Number.isInteger(this.objetos[i].getValor(actual, global, ast)))){
                         array[i]=this.objetos[i].getValor(actual, global, ast);
                         console.log(array[i]);  
                     }else{

@@ -16,6 +16,7 @@
     let OperacionLogica             =   require("../Expresiones/OperacionLogica").OperacionLogica;
     let OperacionRelacional         =   require("../Expresiones/OperacionRelacional").OperacionRelacional;
     let While                       =   require("../Instrucciones/While").While;
+    let Return                      =   require("../Instrucciones/Return").Return;
     let Valor                       =   require("../Expresiones/Valor").Valor;
 %}
 /* description: Parses end executes mathematical expressions. */
@@ -156,6 +157,12 @@ SENTENCIA :     DECLARACION ';'             { $$ = $1; }
             |   IF                          { $$ = $1; }
             |   LLAMADA_FUNCION  ';'        { $$ = $1; }
             |   WHILE                       { $$ = $1; }
+            |   FOR                         { $$ = $1; }
+            |   RETURN                      { $$ = $1; }
+;
+
+RETURN  :   treturn ';'                     { $$ = new Return(undefined,@2.first_line, @2.first_column); }
+        |   treturn EXP ';'                 { $$ = $1; }
 ;
 
 DECLARACION : TIPO  id  '=' EXP 
@@ -268,7 +275,7 @@ LISTA_EXP : LISTA_EXP ',' EXP
         }
 ;
 
-LLAMADA_FUNCION     : id '(' LISTA_EXP ')' { $$ = new LlamadaFuncion($1, $3, @1.first_line, @1.first_column);    }
+LLAMADA_FUNCION  : id '(' LISTA_EXP ')' { $$ = new LlamadaFuncion($1, $3, @1.first_line, @1.first_column);    }
 ;
 
 EXP :   EXP '+' EXP                     { $$ = new OperacionAritmetica($1, $2, $3, @2.first_line, @2.first_column);}
