@@ -69,7 +69,7 @@ export class DeclararArreglo extends Instruccion{
                 }
                 let nuevo_arr=new Arreglo(this.tipo,this.id,this.ctipo,array);
                 actual.insertarArreglo(this.id,nuevo_arr);
-            } else if(this.tipo.getPrimitivo() === TipoPrimitivo.String) {
+            } else if(this.tipo.getPrimitivo() === TipoPrimitivo.Char) {
                 let array: Expresion[] = [];
                 for(let i = 0; i<this.objetos.length; i++) {
                     if(typeof this.objetos[i].getValor(actual, global, ast) === 'string'){

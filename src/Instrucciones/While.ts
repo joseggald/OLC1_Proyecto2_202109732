@@ -3,6 +3,7 @@ import { AST } from "../Entorno/AST";
 import { Expresion } from "../Entorno/Expresion";
 import { Instruccion } from "../Entorno/Instruccion";
 import { Nodo } from "../Entorno/Nodo";
+import { If } from "./If";
 import { Return } from "./Return";
 
 export class While extends Instruccion{
@@ -10,7 +11,7 @@ export class While extends Instruccion{
     exp: Expresion;
     sentencias : Nodo[];
 
-    constructor(exp: Expresion, sentencias : Nodo[], linea: number, columna: number){
+    constructor(exp: Expresion, sentencias : Nodo[],linea: number, columna: number){
         super(linea, columna);
         this.exp = exp;
         this.sentencias = sentencias;
@@ -18,16 +19,22 @@ export class While extends Instruccion{
 
     public ejecutar(actual: Ambito, global: Ambito, ast: AST) {
        let val_cond = this.exp.getValor(actual, global, ast);
-       
+       let a;
        let ambito_local = new Ambito(actual);
        while(val_cond) 
        {
             for(let sentencia of this.sentencias){
                 
                 if(sentencia instanceof Instruccion) {
-                    sentencia.ejecutar(ambito_local, global, ast);
-                    if(sentencia instanceof Return){
+                    a=sentencia.ejecutar(ambito_local, global, ast);
+                    if (sentencia instanceof Return){
                         return;
+                    }
+                    if (sentencia instanceof If){
+                        if(a=="return"){
+                            console.log("return while")
+                            return;
+                        }      
                     }
                 }
                 if(sentencia instanceof Expresion) sentencia.getValor(ambito_local, global, ast);

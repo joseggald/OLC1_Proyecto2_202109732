@@ -11,12 +11,13 @@ export class Return extends Instruccion{
     this.exp=exp;
   }
   public ejecutar(actual: Ambito, global: Ambito, ast: AST) {
-    /*
+    
     if(this.exp===undefined){
-      return null;
+      return "return";
     }else{
       return this.exp.getValor(actual,global,ast);
-    }*/
+    }
+    
   }
 
 }   

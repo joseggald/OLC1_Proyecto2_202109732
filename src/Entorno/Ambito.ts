@@ -58,7 +58,19 @@ export class Ambito {
     }
     
     public getFuncion(id :string): Funcion {
-        return this.tabla_funciones.get(id);
+        let e: Ambito = this;
+        while (e != null) {
+            try {
+                const funcion = e.tabla_funciones.get(id);
+                if (funcion != null) {
+                    return funcion as Funcion;
+                }
+            } catch (error) {
+                console.log(error);
+            }
+            e = e.anterior;
+        }
+        return undefined;
     }
 
     public existeVariable(id :string) : boolean {
@@ -68,6 +80,7 @@ export class Ambito {
     public existeFuncion(id :string) : boolean {
         return this.tabla_funciones.get(id) != undefined;
     }
+    
     public existeArreglo(id :string) : boolean {
         return this.tabla_arreglos.get(id) != undefined;
     }

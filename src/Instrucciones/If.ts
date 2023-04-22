@@ -5,7 +5,7 @@ import { Expresion } from "../Entorno/Expresion";
 import { Instruccion } from "../Entorno/Instruccion";
 import { Nodo } from "../Entorno/Nodo";
 import { TipoPrimitivo } from "../Entorno/Simbolos/TipoPrimitivo";
-
+import { Return } from "./Return";
 export class If extends Instruccion {
     
     exp_condicion   : Expresion;
@@ -22,7 +22,7 @@ export class If extends Instruccion {
     public ejecutar(actual: Ambito, global: Ambito, ast: AST) {
         // Condicion
         let condicion = this.exp_condicion.getValor(actual, global, ast);
-
+        let a;
         // Verificar tipo booleano
         if(this.exp_condicion.tipo.getPrimitivo() != TipoPrimitivo.Boolean) {
             // * ERROR * 
@@ -32,18 +32,34 @@ export class If extends Instruccion {
         if ( condicion ){
             // Crear ambito nuevo
             let ambito_if = new Ambito(actual);
-
+            
             for(let sentencia of this.sentencias){
-                if(sentencia instanceof Instruccion) sentencia.ejecutar(ambito_if, global, ast);
+                if (sentencia instanceof Instruccion) {
+                    let s = sentencia.ejecutar(ambito_if, global, ast);
+                    if(s=="return"){
+                        console.log("return if")
+                        a="return";
+                        return "return";
+                    }    
+                }
+                
                 if(sentencia instanceof Expresion) sentencia.getValor(ambito_if, global, ast);
             }
         }else {
             let ambito_else = new Ambito(actual);
             for(let sentencia of this.sentencias_else){
-                if(sentencia instanceof Instruccion) sentencia.ejecutar(ambito_else, global, ast);
+                if (sentencia instanceof Instruccion) {
+                    let s=sentencia.ejecutar(ambito_else, global, ast);
+                    if(s=="return"){
+                        console.log("return else")
+                        a="return";
+                        return "return";
+                    } 
+                }
                 if(sentencia instanceof Expresion) sentencia.getValor(ambito_else, global, ast);
             }
         }
+        
     }
 
 }

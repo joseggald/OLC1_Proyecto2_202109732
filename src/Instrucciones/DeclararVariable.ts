@@ -28,7 +28,6 @@ export class DeclararVariable extends Instruccion{
             // * ERROR *
             throw new Error("Variable ya se encuentra definida en el entorno actual: " + this.linea + " , " + this.columna);
         }
-
         let res
         if(this.exp != undefined) {
             res = this.exp.getValor(actual, global, ast);
@@ -44,7 +43,7 @@ export class DeclararVariable extends Instruccion{
                 res = 0.0;
             } else if(this.tipo.getPrimitivo() === TipoPrimitivo.String) {
                 res = "";
-            } else if(this.tipo.getPrimitivo() === TipoPrimitivo.String) {
+            } else if(this.tipo.getPrimitivo() === TipoPrimitivo.Char) {
                 res = "";
             }
         }

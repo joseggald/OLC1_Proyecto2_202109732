@@ -8,7 +8,6 @@
     let Asignacion                  =   require("../Instrucciones/Asignacion").Asignacion;
     let AsignacionVector            =   require("../Instrucciones/AsignacionVector").AsignacionVector;
     let If                          =   require("../Instrucciones/If").If;
-    let Parametro                   =   require("../Instrucciones/Parametro").Parametro;
     let AccesoVariable              =   require("../Expresiones/AccesoVariable").AccesoVariable;
     let AccesoVector                =   require("../Expresiones/AccesoVector").AccesoVector;
     let LlamadaFuncion              =   require("../Expresiones/LlamadaFuncion").LlamadaFuncion;
@@ -18,6 +17,10 @@
     let While                       =   require("../Instrucciones/While").While;
     let Return                      =   require("../Instrucciones/Return").Return;
     let Valor                       =   require("../Expresiones/Valor").Valor;
+    let Incremento                  =   require("../Instrucciones/Incremento").Incremento;
+    let Decremento                  =    require("../Instrucciones/Decremento").Decremento;
+    let For                         =    require("../Instrucciones/For").For;
+    let DoWhile                     =   require("../Instrucciones/DoWhile").DoWhile;
 %}
 /* description: Parses end executes mathematical expressions. */
 
@@ -55,16 +58,21 @@ frac                        (?:\.[0-9]+)
 "void"                          {   return 'tvoid';     }
 "return"                        {   return 'treturn';   }
 "new"                          {   return 'tnew';     }
+"main"                          {   return 'tmain';     }
+"for"                           {   return 'tfor';    }
+"do"                           {   return 'tdo';    }
 
 /* =================== EXPRESIONES REGULARES ===================== */
 ([a-zA-ZÑñ]|("_"[a-zA-ZÑñ]))([a-zA-ZÑñ]|[0-9]|"_")*             yytext = yytext.toLowerCase();          return 'id';
 \"(?:[{cor1}|{cor2}]|["\\"]["bnrt/["\\"]]|[^"["\\"])*\"         yytext = yytext.substr(1,yyleng-2);     return 'cadena';
 \'(?:{esc}["bfnrt/{esc}]|{esc}"u"[a-fA-F0-9]{4}|[^"{esc}])\'    yytext = yytext.substr(1,yyleng-2);     return 'caracter'
 {int}{frac}\b                                                                                           return 'decimal'
-{int}\b                                                                                                 return 'entero'
+{int}\b   
+
+//Error                                                                                              return 'entero'
 
 /* ======================== SIGNOS ======================= */
-"$"                             {return '$'};
+
 "++"                            {return '++';}
 "--"                            {return '--';}
 "+"                             {return '+';}
@@ -91,8 +99,7 @@ frac                        (?:\.[0-9]+)
 "}"                             {return '}';}
 "["                             {return '[';}
 "]"                             {return ']';}
-digit                           {return 'num';}
-.                               {}
+. { console.log(`El caracter: "${yytext}" no pertenece al lenguaje`); }
 
 
 /lex
@@ -159,10 +166,25 @@ SENTENCIA :     DECLARACION ';'             { $$ = $1; }
             |   WHILE                       { $$ = $1; }
             |   FOR                         { $$ = $1; }
             |   RETURN                      { $$ = $1; }
+            |   DO_WHILE                    { $$ = $1; }
+            |   INCREMENTO       ';'        { $$ = $1; }
+            |   DECREMENTO       ';'        { $$ = $1; }
 ;
 
 RETURN  :   treturn ';'                     { $$ = new Return(undefined,@2.first_line, @2.first_column); }
-        |   treturn EXP ';'                 { $$ = $1; }
+        |   treturn EXP ';'                 {  $$ = new Return($2,@2.first_line, @2.first_column);}
+;
+
+INCREMENTO : id '++'
+            {
+                $$ = new Incremento($1, @1.first_line, @1.first_column)
+            }
+;
+
+DECREMENTO : id '--'
+            {
+                $$ = new Decremento($1, @1.first_line, @1.first_column)
+            }
 ;
 
 DECLARACION : TIPO  id  '=' EXP 
@@ -217,6 +239,22 @@ ELSE    :   telse IF
         }
 ;
 
+DO_WHILE : tdo BLOQUE_SENTENCAS twhile '(' EXP ')' ';'
+        {
+            $$ = new DoWhile($2, $5, @1.first_line, @1.first_column );
+        }
+;
+
+FOR     : tfor '(' DECLARACION ';' EXP ';' ACTUALIZACION_FOR ')' BLOQUE_SENTENCAS
+        {
+            $$ = new For($3, $5, $7, $9, @1.first_line, @1.first_column );
+        }
+        | tfor '(' ASIGNACION ';' EXP ';' ACTUALIZACION_FOR ')' BLOQUE_SENTENCAS
+        {
+            $$ = new For($3, $5, $7, $9, @1.first_line, @1.first_column );
+        }
+;
+
 WHILE   : twhile '(' EXP ')' BLOQUE_SENTENCAS
         {
             $$ = new While($3, $5, @1.first_line, @1.first_column );
@@ -250,7 +288,8 @@ TIPO    :       tinteger                    { $$ = new Tipo(TipoPrimitivo.Intege
 
 LISTA_PARAM :   LISTA_PARAM ',' TIPO id
             {
-                $1.push( new DeclararVariable($3, $4, undefined, @1.first_line, @1.first_column) );
+                let decla=new DeclararVariable($3, $4, undefined, @1.first_line, @1.first_column)
+                $1.push(decla);
                 $$ = $1;
             }
             |   TIPO id
@@ -276,6 +315,16 @@ LISTA_EXP : LISTA_EXP ',' EXP
 ;
 
 LLAMADA_FUNCION  : id '(' LISTA_EXP ')' { $$ = new LlamadaFuncion($1, $3, @1.first_line, @1.first_column);    }
+;
+
+ACTUALIZACION_FOR: id '++'
+        {
+           $$ = new Incremento($1, @1.first_line, @1.first_column)
+        }
+        | id '--'
+        {
+           $$ = new Decremento($1, @1.first_line, @1.first_column) 
+        }
 ;
 
 EXP :   EXP '+' EXP                     { $$ = new OperacionAritmetica($1, $2, $3, @2.first_line, @2.first_column);}
