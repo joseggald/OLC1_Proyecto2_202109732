@@ -2,7 +2,10 @@ import { Ambito } from "../Entorno/Ambito";
 import { AST } from "../Entorno/AST";
 import { Expresion } from "../Entorno/Expresion";
 import { Instruccion } from "../Entorno/Instruccion";
+import { Tipo } from "../Entorno/Simbolos/Tipo";
 import { TipoPrimitivo } from '../Entorno/Simbolos/TipoPrimitivo';
+import { If } from "../Instrucciones/If";
+import { ReturnPR } from "./ReturnPR";
 
 export class LlamadaFuncion extends Expresion {
     
@@ -92,20 +95,26 @@ export class LlamadaFuncion extends Expresion {
                     let sentencias=actual_func.getSetencias();
                     for(let sentencia of sentencias){ 
                         if(sentencia instanceof Instruccion) {
+                            let b;
                             a=sentencia.ejecutar(actual, global, ast);
-                            if(a=="return"){
-                                return;
-                            }  
-                            if(a!=undefined){
-                                console.log(a);
-                                return a;
-                            } 
                         }
-                        if(sentencia instanceof Expresion) sentencia.getValor(actual, global, ast);   
+                        if(sentencia instanceof Expresion){
+                            a=sentencia.getValor(actual, global, ast);
+                            if(sentencia instanceof ReturnPR){
+                                if (a=="return"){
+                                    let tipoData=new Tipo(TipoPrimitivo.Integer);
+                                    this.tipo=tipoData;
+                                    return;
+                                }else{
+                                    let tipoData=new Tipo(TipoPrimitivo.Integer);
+                                    this.tipo=tipoData;
+                                    return a;
+                                }
+                                
+                            }
+                        }    
                     }            
                 }else{
-                    console.log(this.lista_exp.length+" ******** "+actual_func.idParam.length);
-
                     if(this.lista_exp.length==actual_func.idParam.length){
                         for(let i=0; i<this.lista_exp.length; i++){
                             let variable = actual.getVariable(actual_func.idParam[i]);
@@ -120,16 +129,25 @@ export class LlamadaFuncion extends Expresion {
                         let sentencias=actual_func.getSetencias();
                         for(let sentencia of sentencias){ 
                             if(sentencia instanceof Instruccion) {
-                                a=sentencia.ejecutar(actual, global, ast);
-                                if(a=="return"){
+                                let s=sentencia.ejecutar(actual, global, ast);
+                                if(s=="return"){
                                     return;
                                 }  
-                                if(a!=undefined){
-                                    let data=a;
-                                    return a;
+                                if(s!=undefined){
+                                    return s;
                                 } 
                             }
-                            if(sentencia instanceof Expresion) sentencia.getValor(actual, global, ast);   
+                            if(sentencia instanceof Expresion){
+                                a=sentencia.getValor(actual, global, ast);
+                               if(sentencia instanceof ReturnPR){
+                                    if(a=="return"){
+                                        return;
+                                    }  
+                                    if(a!=undefined){
+                                        return a;
+                                    } 
+                               }    
+                            }
                         } 
                     }else{
                         throw new Error("ERROR => Los parametro mandados no encajan con la dimension de la funcion");

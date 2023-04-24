@@ -6,6 +6,7 @@ import { Instruccion } from "../Entorno/Instruccion";
 import { Nodo } from "../Entorno/Nodo";
 import { TipoPrimitivo } from "../Entorno/Simbolos/TipoPrimitivo";
 import { Return } from "./Return";
+import { ReturnPR } from "../Expresiones/ReturnPR";
 export class If extends Instruccion {
     
     exp_condicion   : Expresion;
@@ -50,16 +51,27 @@ export class If extends Instruccion {
             for(let sentencia of this.sentencias_else){
                 if (sentencia instanceof Instruccion) {
                     let s=sentencia.ejecutar(ambito_else, global, ast);
-                    if(s=="return"){
-                        console.log("return else")
-                        a="return";
-                        return "return";
-                    }
-                    if(s==Expresion){
-                       return s; 
+                    if (sentencia instanceof If){
+                        if(s=="return"){
+                            console.log("return for")
+                            return s ;
+                        } 
+                        if(s!=undefined){
+                            return s;
+                        }      
                     }
                 }
-                if(sentencia instanceof Expresion) sentencia.getValor(ambito_else, global, ast);
+                if(sentencia instanceof Expresion){
+                    a=sentencia.getValor(actual, global, ast);
+                   if(sentencia instanceof ReturnPR){
+                        if(a=="return"){
+                            return "return";
+                        }  
+                        if(a!=undefined){
+                            return a;
+                        } 
+                   }    
+                }
             }
         }
         

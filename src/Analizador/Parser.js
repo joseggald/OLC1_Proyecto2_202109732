@@ -124,10 +124,10 @@ case 19:
  this.$ = new LlamadaPrint($$[$0-3], $$[$0-1], _$[$0-3].first_line, _$[$0-3].first_column);    
 break;
 case 20:
- this.$ = new Return(undefined,_$[$0].first_line, _$[$0].first_column); 
+ this.$ = new ReturnPR(undefined,_$[$0].first_line, _$[$0].first_column); 
 break;
 case 21:
-  this.$ = new Return($$[$0-1],_$[$0-1].first_line, _$[$0-1].first_column);
+  this.$ = new ReturnPR($$[$0-1],_$[$0-1].first_line, _$[$0-1].first_column);
 break;
 case 22:
 
@@ -490,6 +490,7 @@ parse: function parse(input) {
     let OperacionRelacional         =   require("../Expresiones/OperacionRelacional").OperacionRelacional;
     let While                       =   require("../Instrucciones/While").While;
     let Return                      =   require("../Instrucciones/Return").Return;
+    let ReturnPR                    =   require("../Expresiones/ReturnPR").ReturnPR;
     let Valor                       =   require("../Expresiones/Valor").Valor;
     let Incremento                  =   require("../Instrucciones/Incremento").Incremento;
     let Decremento                  =    require("../Instrucciones/Decremento").Decremento;

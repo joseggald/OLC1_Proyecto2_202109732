@@ -17,6 +17,7 @@
     let OperacionRelacional         =   require("../Expresiones/OperacionRelacional").OperacionRelacional;
     let While                       =   require("../Instrucciones/While").While;
     let Return                      =   require("../Instrucciones/Return").Return;
+    let ReturnPR                    =   require("../Expresiones/ReturnPR").ReturnPR;
     let Valor                       =   require("../Expresiones/Valor").Valor;
     let Incremento                  =   require("../Instrucciones/Incremento").Incremento;
     let Decremento                  =    require("../Instrucciones/Decremento").Decremento;
@@ -150,7 +151,30 @@ SENTENCIAS :    SENTENCIAS SENTENCIA
             }
 ;
 
+SENTENCIAS_FUNC :    SENTENCIAS_FUNC SENTENCIA_FUNC
+            {
+                $1.push($2);
+                $$ = $1;
+            }
+            |   SENTENCIA
+            {
+                let lstsent = [];
+                lstsent.push($1);
+                $$ = lstsent;
+            }
+;
+
 BLOQUE_SENTENCAS : '{' SENTENCIAS '}'
+                {
+                       $$ = $2;
+                }
+                |  '{' '}'
+                {
+                        $$ = [];
+                }
+;
+
+BLOQUE_SENTENCAS_FUNC : '{' SENTENCIAS_FUNC '}'
                 {
                        $$ = $2;
                 }
@@ -168,6 +192,20 @@ SENTENCIA :     DECLARACION ';'             { $$ = $1; }
             |   LLAMADA_FUNCION  ';'        { $$ = $1; }
             |   WHILE                       { $$ = $1; }
             |   FOR                         { $$ = $1; }
+            |   DO_WHILE                    { $$ = $1; }
+            |   INCREMENTO       ';'        { $$ = $1; }
+            |   DECREMENTO       ';'        { $$ = $1; }
+            |   PRINT       ';'        { $$ = $1; }
+;
+
+SENTENCIA_FUNC :     DECLARACION ';'             { $$ = $1; }
+            |   FUNCION                     { $$ = $1; }
+            |   ASIGNACION                  { $$ = $1; }
+            |   VECTOR_ADD                  { $$ = $1; }
+            |   IF                          { $$ = $1; }
+            |   LLAMADA_FUNCION  ';'        { $$ = $1; }
+            |   WHILE                       { $$ = $1; }
+            |   FOR                         { $$ = $1; }
             |   RETURN                      { $$ = $1; }
             |   DO_WHILE                    { $$ = $1; }
             |   INCREMENTO       ';'        { $$ = $1; }
@@ -178,8 +216,8 @@ SENTENCIA :     DECLARACION ';'             { $$ = $1; }
 PRINT : tPrint '(' LISTA_EXP ')' { $$ = new LlamadaPrint($1, $3, @1.first_line, @1.first_column);    }
 ;
 
-RETURN  :   treturn ';'                     { $$ = new Return(undefined,@2.first_line, @2.first_column); }
-        |   treturn EXP ';'                 {  $$ = new Return($2,@2.first_line, @2.first_column);}
+RETURN  :   treturn ';'                     { $$ = new ReturnPR(undefined,@2.first_line, @2.first_column); }
+        |   treturn EXP ';'                 {  $$ = new ReturnPR($2,@2.first_line, @2.first_column);}
 ;
 
 INCREMENTO : id '++'
@@ -268,19 +306,19 @@ WHILE   : twhile '(' EXP ')' BLOQUE_SENTENCAS
         }
 ;
 
-FUNCION:        TIPO    id '(' LISTA_PARAM ')' BLOQUE_SENTENCAS
+FUNCION:        TIPO    id '(' LISTA_PARAM ')' BLOQUE_SENTENCAS_FUNC
             {
                 $$ = new DeclararFuncion($1, $2, $4, $6, @2.first_line, @2.first_column);
             }
-            |   tvoid   id '(' LISTA_PARAM ')' BLOQUE_SENTENCAS
+            |   tvoid   id '(' LISTA_PARAM ')' BLOQUE_SENTENCAS_FUNC
             {
                 $$ = new DeclararFuncion(new Tipo(TipoPrimitivo.Void), $2, $4, $6, @2.first_line, @2.first_column);
             }
-            |   TIPO    id '('  ')' BLOQUE_SENTENCAS
+            |   TIPO    id '('  ')' BLOQUE_SENTENCAS_FUNC
             {
                 $$ = new DeclararFuncion($1, $2, [], $5, @2.first_line, @2.first_column);
             }
-            |   tvoid   id '('  ')' BLOQUE_SENTENCAS
+            |   tvoid   id '('  ')' BLOQUE_SENTENCAS_FUNC
             {
                 $$ = new DeclararFuncion(new Tipo(TipoPrimitivo.Void), $2, [], $5, @2.first_line, @2.first_column);
             }

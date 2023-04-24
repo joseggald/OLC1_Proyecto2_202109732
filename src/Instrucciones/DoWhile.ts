@@ -3,6 +3,7 @@ import { AST } from "../Entorno/AST";
 import { Expresion } from "../Entorno/Expresion";
 import { Instruccion } from "../Entorno/Instruccion";
 import { Nodo } from "../Entorno/Nodo";
+import { ReturnPR } from "../Expresiones/ReturnPR";
 import { Return } from "./Return";
 
 export class DoWhile extends Instruccion {
@@ -19,20 +20,20 @@ export class DoWhile extends Instruccion {
     public ejecutar(actual: Ambito, global: Ambito, ast: AST) {
         let val_cond = this.exp.getValor(actual, global, ast);
         let ambito_local = new Ambito(actual);
-
+        let a;
         do {
             for (let sentencia of this.sentencias) {
                 if (sentencia instanceof Instruccion){
                     sentencia.ejecutar(ambito_local, global, ast);
-                    if(sentencia instanceof Return){
-                        let a=sentencia.ejecutar(ambito_local, global, ast);
-                        if(a==null) {
-                            console.log(a)
+                }
+                if(sentencia instanceof Expresion){
+                    a=sentencia.getValor(actual, global, ast);
+                    if(sentencia instanceof ReturnPR){
+                        if(a=="return"){
                             return;
                         }
-                    }
+                    }    
                 }
-                if (sentencia instanceof Expresion) sentencia.getValor(ambito_local, global, ast);
             }
             val_cond = this.exp.getValor(actual, global, ast);
         } while (val_cond);

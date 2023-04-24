@@ -45,7 +45,10 @@ export class OperacionAritmetica extends Expresion {
 
     public Suma(val1:any,tipo1:Tipo,val2:any,tipo2:Tipo,actual:Ambito,global:Ambito,ast:AST) : any
     {
+        console.log(tipo1)
+        console.log("no paso")
         let prim1:TipoPrimitivo = tipo1.getPrimitivo();
+        console.log(prim1)
         let prim2:TipoPrimitivo = tipo2.getPrimitivo();
         // TIPO DOUBLE
         if (
