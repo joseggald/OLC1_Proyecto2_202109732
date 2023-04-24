@@ -2,6 +2,7 @@ import { Expresion } from "../Entorno/Expresion";
 import { Ambito } from "../Entorno/Ambito";
 import { AST } from "../Entorno/AST";
 import { Instruccion } from "../Entorno/Instruccion";
+import { ReturnClass } from "../Entorno/Simbolos/ReturnClass";
 
 
 export class Return extends Instruccion{
@@ -11,7 +12,7 @@ export class Return extends Instruccion{
     this.exp=exp;
   }
   public ejecutar(actual: Ambito, global: Ambito, ast: AST) {
-    
+    let a;
     if(this.exp===undefined){
       return "return";
     }else{

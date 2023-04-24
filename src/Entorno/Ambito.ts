@@ -72,6 +72,14 @@ export class Ambito {
         }
         return undefined;
     }
+    
+    public mostrarTablaVariables(): string[] {
+        let lista_variables: string[] = [];
+        this.tabla_variables.forEach((variable, id) => {
+            lista_variables.push(id);
+        });
+        return lista_variables;
+    }
 
     public existeVariable(id :string) : boolean {
         return this.tabla_variables.get(id) != undefined;

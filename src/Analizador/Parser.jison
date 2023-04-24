@@ -11,6 +11,7 @@
     let AccesoVariable              =   require("../Expresiones/AccesoVariable").AccesoVariable;
     let AccesoVector                =   require("../Expresiones/AccesoVector").AccesoVector;
     let LlamadaFuncion              =   require("../Expresiones/LlamadaFuncion").LlamadaFuncion;
+    let LlamadaPrint                =   require("../Expresiones/LlamadaPrint").LlamadaPrint;
     let OperacionAritmetica         =   require("../Expresiones/OperacionAritmetica").OperacionAritmetica;
     let OperacionLogica             =   require("../Expresiones/OperacionLogica").OperacionLogica;
     let OperacionRelacional         =   require("../Expresiones/OperacionRelacional").OperacionRelacional;
@@ -61,13 +62,15 @@ frac                        (?:\.[0-9]+)
 "main"                          {   return 'tmain';     }
 "for"                           {   return 'tfor';    }
 "do"                           {   return 'tdo';    }
+"print"                           {   return 'tPrint';    }
+"toUpper"                           {   return 'tToUpper';    }
 
 /* =================== EXPRESIONES REGULARES ===================== */
 ([a-zA-ZÑñ]|("_"[a-zA-ZÑñ]))([a-zA-ZÑñ]|[0-9]|"_")*             yytext = yytext.toLowerCase();          return 'id';
 \"(?:[{cor1}|{cor2}]|["\\"]["bnrt/["\\"]]|[^"["\\"])*\"         yytext = yytext.substr(1,yyleng-2);     return 'cadena';
 \'(?:{esc}["bfnrt/{esc}]|{esc}"u"[a-fA-F0-9]{4}|[^"{esc}])\'    yytext = yytext.substr(1,yyleng-2);     return 'caracter'
 {int}{frac}\b                                                                                           return 'decimal'
-{int}\b   
+{int}\b                                                                                                 return 'entero'
 
 //Error                                                                                              return 'entero'
 
@@ -169,6 +172,10 @@ SENTENCIA :     DECLARACION ';'             { $$ = $1; }
             |   DO_WHILE                    { $$ = $1; }
             |   INCREMENTO       ';'        { $$ = $1; }
             |   DECREMENTO       ';'        { $$ = $1; }
+            |   PRINT       ';'        { $$ = $1; }
+;
+
+PRINT : tPrint '(' LISTA_EXP ')' { $$ = new LlamadaPrint($1, $3, @1.first_line, @1.first_column);    }
 ;
 
 RETURN  :   treturn ';'                     { $$ = new Return(undefined,@2.first_line, @2.first_column); }
@@ -314,7 +321,8 @@ LISTA_EXP : LISTA_EXP ',' EXP
         }
 ;
 
-LLAMADA_FUNCION  : id '(' LISTA_EXP ')' { $$ = new LlamadaFuncion($1, $3, @1.first_line, @1.first_column);    }
+LLAMADA_FUNCION  : id '('  ')' { $$ = new LlamadaFuncion($1, [], @1.first_line, @1.first_column);    } 
+                | id '(' LISTA_EXP ')' { $$ = new LlamadaFuncion($1, $3, @1.first_line, @1.first_column);    }
 ;
 
 ACTUALIZACION_FOR: id '++'
@@ -333,7 +341,7 @@ EXP :   EXP '+' EXP                     { $$ = new OperacionAritmetica($1, $2, $
     |   EXP '/' EXP                     { $$ = new OperacionAritmetica($1, $2, $3, @2.first_line, @2.first_column);}
     |   '-' EXP %prec negativo          { $$ = $2;}
     |   '(' EXP ')'                     { $$ = $2;}
-    |   EXP '++'                     { $$ = $2;}
+    |   EXP '++'                        { $$ = $2;}
     |   EXP '=='  EXP                   { $$ = new OperacionRelacional($1, $2, $3, @2.first_line, @2.first_column);}
     |   EXP '!='  EXP                   { $$ = new OperacionRelacional($1, $2, $3, @2.first_line, @2.first_column);}
     |   EXP '<'   EXP                   { $$ = new OperacionRelacional($1, $2, $3, @2.first_line, @2.first_column);}
@@ -344,7 +352,7 @@ EXP :   EXP '+' EXP                     { $$ = new OperacionAritmetica($1, $2, $
     |   EXP '||'  EXP                   { $$ = new OperacionLogica($1, $2, $3, @2.first_line, @2.first_column);}
     |   id                              { $$ = new AccesoVariable($1, @1.first_line, @1.first_column);        }
     |   id '[' EXP ']'                  { $$ = new AccesoVector($1, $3,@1.first_line, @1.first_column);        }
-    |   LLAMADA_FUNCION                 { $$ = $1; }
+    |   LLAMADA_FUNCION                 { $$ = $1;}
     |   entero                          { $$ = new Valor($1, "integer", @1.first_line, @1.first_column);}
     |   decimal                         { $$ = new Valor($1, "double", @1.first_line, @1.first_column); }
     |   caracter                        { $$ = new Valor($1, "char", @1.first_line, @1.first_column);   }

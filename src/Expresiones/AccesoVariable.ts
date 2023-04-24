@@ -16,7 +16,7 @@ export class AccesoVariable extends Expresion{
         let variable = actual.getVariable(this.nombreVar);
         if(variable === undefined) {
             // * ERROR *
-            throw new Error("Sintactico Error: No existe la variable NENE " + this.nombreVar + " " + this.linea + ", " + this.columna);
+            throw new Error("Sintactico Error: No existe la variable" + this.nombreVar + " " + this.linea + ", " + this.columna);
         }
         
         let valor_var = variable.getValor();

@@ -54,7 +54,10 @@ export class If extends Instruccion {
                         console.log("return else")
                         a="return";
                         return "return";
-                    } 
+                    }
+                    if(s==Expresion){
+                       return s; 
+                    }
                 }
                 if(sentencia instanceof Expresion) sentencia.getValor(ambito_else, global, ast);
             }
