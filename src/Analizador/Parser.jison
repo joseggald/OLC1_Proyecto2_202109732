@@ -73,12 +73,14 @@ frac                        (?:\.[0-9]+)
 "add"                           {   return 'tadd';     }                 
 "switch"                        {   return 'tswitch';     }                 
 "case"                        {   return 'tcase';     }                 
-"default"                        {   return 'tdefault';     }
+"defaul"                        {   return 'tdefaul';     }
 "toLower"                      {   return 'ttoLower';     }
 "toUpper"                      {   return 'ttoUpper';     }
-"main"                          {   return 'tmain';     }
-"print"                           {   return 'tPrint';    }
-
+"length"                      {   return 'tlength';     }
+"truncate"                      {   return 'ttruncate';     }
+'round'                        {   return 'tround';     }
+'toString'                        {   return 'ttostring';     }
+'typeOf'                        {   return 'ttypeof';     }
 
 /* =================== EXPRESIONES REGULARES ===================== */
 ([a-zA-ZÑñ]|("_"[a-zA-ZÑñ]))([a-zA-ZÑñ]|[0-9]|"_")*             yytext = yytext.toLowerCase();          return 'id';
@@ -86,8 +88,6 @@ frac                        (?:\.[0-9]+)
 \'(?:{esc}["bfnrt/{esc}]|{esc}"u"[a-fA-F0-9]{4}|[^"{esc}])\'    yytext = yytext.substr(1,yyleng-2);     return 'caracter'
 {int}{frac}\b                                                                                           return 'decimal'
 {int}\b                                                                                                 return 'entero'
-
-//Error                                                                                              return 'entero'
 
 /* ======================== SIGNOS ======================= */
 "$"                             {return '$'};
@@ -183,17 +183,17 @@ BLOQUE_SENTENCAS : '{' SENTENCIAS '}'
 
 SENTENCIA :     DECLARACION ';'             { $$ = $1; }
             |   FUNCION                     { $$ = $1; }
+            |   ASIGNACION  ';'             { $$ = $1; }
+            |   VECTOR_ADD                  { $$ = $1; }
             |   LISTA_ADD                   { $$ = $1; }
             |   LISTA_MODIFICAR  ';'        { $$ = $1; }
-            |   ASIGNACION                  { $$ = $1; }
-            |   VECTOR_ADD                  { $$ = $1; }
             |   IF                          { $$ = $1; }
             |   LLAMADA_FUNCION  ';'        { $$ = $1; }
             |   WHILE                       { $$ = $1; }
-            |   FOR                         { $$ = $1; }
             |   DO_WHILE                    { $$ = $1; }
             |   INCREMENTO       ';'        { $$ = $1; }
             |   DECREMENTO       ';'        { $$ = $1; }
+            |   FOR                         { $$ = $1; }
             |   PRINT       ';'             { $$ = $1; }
             |   MAIN ';'                    { $$ = $1; }
             |   RETURN                    { $$ = $1; }
@@ -236,6 +236,10 @@ DECLARACION : TIPO  id  '=' EXP
             | TIPO '[' ']' id '=' '{' LISTA_EXP '}' 
             {
                 $$ = new DeclararArreglo($1, $4,undefined, $7,undefined, @2.first_line, @2.first_column);
+            }
+            | tlist '<' TIPO '>' id '=' tnew tlist '<' TIPO '>'
+            {
+                $$ = new DeclararLista($3, $5, $10, @2.first_line, @2.first_column);
             }
 ;
 
@@ -391,7 +395,7 @@ EXP :   EXP '+' EXP                     { $$ = new OperacionAritmetica($1, $2, $
     |   EXP '*' EXP                     { $$ = new OperacionAritmetica($1, $2, $3, @2.first_line, @2.first_column);}
     |   EXP '/' EXP                     { $$ = new OperacionAritmetica($1, $2, $3, @2.first_line, @2.first_column);}
     |   EXP '^' EXP                     { $$ = new OperacionAritmetica($1, $2, $3, @2.first_line, @2.first_column);}
-    |   '-' EXP %prec negativo          { $$ = $2;}
+    |   '-' EXP %prec negativo          { $$ = new OperacionAritmetica($1, $2, $3, @2.first_line, @2.first_column);}
     |   '(' EXP ')'                     { $$ = $2;}
     |   EXP '=='  EXP                   { $$ = new OperacionRelacional($1, $2, $3, @2.first_line, @2.first_column);}
     |   EXP '!='  EXP                   { $$ = new OperacionRelacional($1, $2, $3, @2.first_line, @2.first_column);}

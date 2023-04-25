@@ -5,12 +5,12 @@ import { Tipo } from "../Entorno/Simbolos/Tipo";
 import { TipoPrimitivo } from "../Entorno/Simbolos/TipoPrimitivo";
 
 export class OperacionAritmetica extends Expresion {
-    
-    exp1    : Expresion;
-    exp2    : Expresion;
-    signo   : string;
 
-    constructor(exp1 :Expresion, signo :string, exp2 :Expresion,linea :number, columna :number ) {
+    exp1: Expresion;
+    exp2: Expresion;
+    signo: string;
+
+    constructor(exp1: Expresion, signo: string, exp2: Expresion, linea: number, columna: number) {
         super(linea, columna);
         this.exp1 = exp1;
         this.signo = signo;
@@ -18,25 +18,25 @@ export class OperacionAritmetica extends Expresion {
     }
 
     public getValor(actual: Ambito, global: Ambito, ast: AST) {
-        let val1    = this.exp1.getValor(actual,global,ast);
-        let tipo1   = this.exp1.tipo;
-        let val2    = this.exp2.getValor(actual,global,ast);
-        let tipo2   = this.exp2.tipo;
+        let val1 = this.exp1.getValor(actual, global, ast);
+        let tipo1 = this.exp1.tipo;
+        let val2 = this.exp2.getValor(actual, global, ast);
+        let tipo2 = this.exp2.tipo;
 
-        switch(this.signo) {
-            case "+" :
+        switch (this.signo) {
+            case "+":
                 {
                     return this.Suma(val1, tipo1, val2, tipo2, actual, global, ast);
                 }
-            case "-" :
+            case "-":
                 {
                     return this.Resta(val1, tipo1, val2, tipo2, actual, global, ast);
                 }
-            case "*" :
+            case "*":
                 {
                     return this.Multiplicacion(val1, tipo1, val2, tipo2, actual, global, ast);
                 }
-            case "/" :
+            case "/":
                 {
                     return this.Division(val1, tipo1, val2, tipo2, actual, global, ast);
                 }
@@ -47,119 +47,193 @@ export class OperacionAritmetica extends Expresion {
         }
     }
 
-    public Suma(val1:any,tipo1:Tipo,val2:any,tipo2:Tipo,actual:Ambito,global:Ambito,ast:AST) : any
-    {
-        
-        let prim1:TipoPrimitivo = tipo1.getPrimitivo();
-        let prim2:TipoPrimitivo = tipo2.getPrimitivo();
+    public Suma(val1: any, tipo1: Tipo, val2: any, tipo2: Tipo, actual: Ambito, global: Ambito, ast: AST): any {
+        let prim1: TipoPrimitivo = tipo1.getPrimitivo();
+        let prim2: TipoPrimitivo = tipo2.getPrimitivo();
         // TIPO DOUBLE
-        if (
-            (prim1 == TipoPrimitivo.Double && 
-            (prim2 == TipoPrimitivo.Integer || prim2 == TipoPrimitivo.Double || prim2 == TipoPrimitivo.Char))
-            || ( prim2 == TipoPrimitivo.Double &&
-            (prim1 == TipoPrimitivo.Integer || prim1 == TipoPrimitivo.Double || prim1 == TipoPrimitivo.Char))
-        ){
+        if (prim1 == TipoPrimitivo.Integer && prim2 == TipoPrimitivo.Integer) {
+            this.tipo = new Tipo(TipoPrimitivo.Integer);
+            return val1 + val2;
+        }else if (prim1 == TipoPrimitivo.Integer && prim2 == TipoPrimitivo.Double) {
+            this.tipo = new Tipo(TipoPrimitivo.Double);
+            return val1 + val2;
+        }else if (prim1 == TipoPrimitivo.Double && prim2 == TipoPrimitivo.Integer) {
             this.tipo = new Tipo(TipoPrimitivo.Double);
             return val1 + val2;
         }
-        // TIPO INTEGER
-        else if (
-            (prim1 == TipoPrimitivo.Integer && 
-            (prim2 == TipoPrimitivo.Integer || prim2 == TipoPrimitivo.Double || prim2 == TipoPrimitivo.Char))
-            || ( prim2 == TipoPrimitivo.Integer &&
-            (prim1 == TipoPrimitivo.Integer || prim1 == TipoPrimitivo.Double || prim1 == TipoPrimitivo.Char))
-        )
-        {
-            this.tipo = new Tipo(TipoPrimitivo.Integer);
-            return val1 + val2;
-        } 
-        else if (prim1 == TipoPrimitivo.String || prim2 == TipoPrimitivo.String)
-        {
+        else if (prim1 == TipoPrimitivo.Integer && prim2 == TipoPrimitivo.Boolean) {
+            if (val2 == true) {
+                this.tipo = new Tipo(TipoPrimitivo.Integer);
+                return val1 + 1;
+            }else{
+                this.tipo = new Tipo(TipoPrimitivo.Integer);
+                return val1 + 0;
+            }
+        }else if(prim1 == TipoPrimitivo.Integer && prim2 == TipoPrimitivo.String){
             this.tipo = new Tipo(TipoPrimitivo.String);
-            return val1.toString() + val2.toString();
+            return val1 + val2;
+        }else if (prim1 == TipoPrimitivo.Double && prim2 == TipoPrimitivo.Double) {
+            this.tipo = new Tipo(TipoPrimitivo.Double);
+            return val1 + val2;
+        }else if (prim1 == TipoPrimitivo.Double && prim2 == TipoPrimitivo.Boolean) {
+            if (val2 == true) {
+                this.tipo = new Tipo(TipoPrimitivo.Double);
+                return val1 + 1;
+            }else{
+                this.tipo = new Tipo(TipoPrimitivo.Double);
+                return val1 + 0;
+            }
+        }else if(prim1 == TipoPrimitivo.Double && prim2 == TipoPrimitivo.String){
+            this.tipo = new Tipo(TipoPrimitivo.String);
+            return val1 + val2;
+        }else if (prim1 == TipoPrimitivo.Boolean && prim2 == TipoPrimitivo.Integer) {
+            if (val1 == true) {
+                this.tipo = new Tipo(TipoPrimitivo.Integer);
+                return val2 + 1;
+            }else{
+                this.tipo = new Tipo(TipoPrimitivo.Integer);
+                return val2 + 0;
+            }
+        }else if (prim1 == TipoPrimitivo.Boolean && prim2 == TipoPrimitivo.Double) {
+            if (val1 == true) {
+                this.tipo = new Tipo(TipoPrimitivo.Double);
+                return val2 + 1;
+            }else{
+                this.tipo = new Tipo(TipoPrimitivo.Double);
+                return val2 + 0;
+            }
+        }else if (prim1 == TipoPrimitivo.Boolean && prim2 == TipoPrimitivo.String) {
+            if (val1 == true) {
+                this.tipo = new Tipo(TipoPrimitivo.String);
+                return val1 + val2;
+            }else{
+                this.tipo = new Tipo(TipoPrimitivo.String);
+                return val1 + val2;
+            }
+        }else if (prim1 == TipoPrimitivo.String && prim2 == TipoPrimitivo.Integer) {
+            this.tipo = new Tipo(TipoPrimitivo.String);
+            return val1 + val2;
+        }else if (prim1 == TipoPrimitivo.String && prim2 == TipoPrimitivo.Double) {
+            this.tipo = new Tipo(TipoPrimitivo.String);
+            return val1 + val2;
+        }else if (prim1 == TipoPrimitivo.String && prim2 == TipoPrimitivo.Boolean) {
+            if (val1 == true) {
+                this.tipo = new Tipo(TipoPrimitivo.String);
+                return val1 + val2;
+            }else{
+                this.tipo = new Tipo(TipoPrimitivo.String);
+                return val1 + val2;
+            }
+        }else if (prim1 == TipoPrimitivo.String && prim2 == TipoPrimitivo.Char) {
+            this.tipo = new Tipo(TipoPrimitivo.String);
+            return val1 + val2;
+        }else if (prim1 == TipoPrimitivo.String && prim2 == TipoPrimitivo.String) {
+            this.tipo = new Tipo(TipoPrimitivo.String);
+            return val1 + val2;
         }
     }
 
-    public Resta(val1:any,tipo1:Tipo,val2:any,tipo2:Tipo,actual:Ambito,global:Ambito,ast:AST) : any
-    {
-        let prim1:TipoPrimitivo = tipo1.getPrimitivo();
-        let prim2:TipoPrimitivo = tipo2.getPrimitivo();
+    public Resta(val1: any, tipo1: Tipo, val2: any, tipo2: Tipo, actual: Ambito, global: Ambito, ast: AST): any {
+        let prim1: TipoPrimitivo = tipo1.getPrimitivo();
+        let prim2: TipoPrimitivo = tipo2.getPrimitivo();
         // TIPO DOUBLE
-        if (
-            (prim1 == TipoPrimitivo.Double && 
-            (prim2 == TipoPrimitivo.Integer || prim2 == TipoPrimitivo.Double || prim2 == TipoPrimitivo.Char))
-            || ( prim2 == TipoPrimitivo.Double &&
-            (prim1 == TipoPrimitivo.Integer || prim1 == TipoPrimitivo.Double || prim1 == TipoPrimitivo.Char))
-        ){
-            this.tipo = new Tipo(TipoPrimitivo.Double);
-            return val1 - val2;
-        }
-        // TIPO INTEGER
-        else if (
-            (prim1 == TipoPrimitivo.Integer && 
-            (prim2 == TipoPrimitivo.Integer || prim2 == TipoPrimitivo.Double || prim2 == TipoPrimitivo.Char))
-            || ( prim2 == TipoPrimitivo.Integer &&
-            (prim1 == TipoPrimitivo.Integer || prim1 == TipoPrimitivo.Double || prim1 == TipoPrimitivo.Char))
-        )
-        {
+        if (prim1 == TipoPrimitivo.Integer && prim2 == TipoPrimitivo.Integer) {
             this.tipo = new Tipo(TipoPrimitivo.Integer);
             return val1 - val2;
-        } 
+        }else if (prim1 == TipoPrimitivo.Integer && prim2 == TipoPrimitivo.Double) {
+            this.tipo = new Tipo(TipoPrimitivo.Double);
+            return val1 - val2;
+        }else if (prim1 == TipoPrimitivo.Integer && prim2 == TipoPrimitivo.Boolean) {
+            if (val2 == true) {
+                this.tipo = new Tipo(TipoPrimitivo.Integer);
+                return val1 - 1;
+            }else{
+                this.tipo = new Tipo(TipoPrimitivo.Integer);
+                return val1 - 0;
+            }
+        }else if (prim1 == TipoPrimitivo.Double && prim2 == TipoPrimitivo.Integer) {
+            this.tipo = new Tipo(TipoPrimitivo.Double);
+            return val1 - val2;
+        }else if (prim1 == TipoPrimitivo.Double && prim2 == TipoPrimitivo.Double) {
+            this.tipo = new Tipo(TipoPrimitivo.Double);
+            return val1 - val2;
+        }else if (prim1 == TipoPrimitivo.Double && prim2 == TipoPrimitivo.Boolean) {
+            if (val2 == true) {
+                this.tipo = new Tipo(TipoPrimitivo.Double);
+                return val1 - 1;
+            }else{
+                this.tipo = new Tipo(TipoPrimitivo.Double);
+                return val1 - 0;
+            }
+        }else if (prim1 == TipoPrimitivo.Boolean && prim2 == TipoPrimitivo.Integer) {
+            if (val1 == true) {
+                this.tipo = new Tipo(TipoPrimitivo.Integer);
+                return 1 - val2;
+            }else{
+                this.tipo = new Tipo(TipoPrimitivo.Integer);
+                return 0 - val2;
+            }
+        }else if (prim1 == TipoPrimitivo.Boolean && prim2 == TipoPrimitivo.Double) {
+            if (val1 == true) {
+                this.tipo = new Tipo(TipoPrimitivo.Double);
+                return 1 - val2;
+            }else{
+                this.tipo = new Tipo(TipoPrimitivo.Double);
+                return 0 - val2;
+            }
+        }
     }
 
-    public Multiplicacion(val1:any,tipo1:Tipo,val2:any,tipo2:Tipo,actual:Ambito,global:Ambito,ast:AST) : any
-    {
-        let prim1:TipoPrimitivo = tipo1.getPrimitivo();
-        let prim2:TipoPrimitivo = tipo2.getPrimitivo();
+    public Multiplicacion(val1: any, tipo1: Tipo, val2: any, tipo2: Tipo, actual: Ambito, global: Ambito, ast: AST): any {
+        let prim1: TipoPrimitivo = tipo1.getPrimitivo();
+        let prim2: TipoPrimitivo = tipo2.getPrimitivo();
         // TIPO DOUBLE
         if (
-            (prim1 == TipoPrimitivo.Double && 
-            (prim2 == TipoPrimitivo.Integer || prim2 == TipoPrimitivo.Double || prim2 == TipoPrimitivo.Char))
-            || ( prim2 == TipoPrimitivo.Double &&
-            (prim1 == TipoPrimitivo.Integer || prim1 == TipoPrimitivo.Double || prim1 == TipoPrimitivo.Char))
-        ){
+            (prim1 == TipoPrimitivo.Double &&
+                (prim2 == TipoPrimitivo.Integer || prim2 == TipoPrimitivo.Double || prim2 == TipoPrimitivo.Char))
+            || (prim2 == TipoPrimitivo.Double &&
+                (prim1 == TipoPrimitivo.Integer || prim1 == TipoPrimitivo.Double || prim1 == TipoPrimitivo.Char))
+        ) {
             this.tipo = new Tipo(TipoPrimitivo.Double);
             return val1 * val2;
         }
         // TIPO INTEGER
         else if (
-            (prim1 == TipoPrimitivo.Integer && 
-            (prim2 == TipoPrimitivo.Integer || prim2 == TipoPrimitivo.Double || prim2 == TipoPrimitivo.Char))
-            || ( prim2 == TipoPrimitivo.Integer &&
-            (prim1 == TipoPrimitivo.Integer || prim1 == TipoPrimitivo.Double || prim1 == TipoPrimitivo.Char))
-        )
-        {
+            (prim1 == TipoPrimitivo.Integer &&
+                (prim2 == TipoPrimitivo.Integer || prim2 == TipoPrimitivo.Double || prim2 == TipoPrimitivo.Char))
+            || (prim2 == TipoPrimitivo.Integer &&
+                (prim1 == TipoPrimitivo.Integer || prim1 == TipoPrimitivo.Double || prim1 == TipoPrimitivo.Char))
+        ) {
             this.tipo = new Tipo(TipoPrimitivo.Integer);
             return val1 * val2;
-        } 
+        }
     }
 
-    public Division(val1:any,tipo1:Tipo,val2:any,tipo2:Tipo,actual:Ambito,global:Ambito,ast:AST) : any
-    {
-        let prim1:TipoPrimitivo = tipo1.getPrimitivo();
-        let prim2:TipoPrimitivo = tipo2.getPrimitivo();
+    public Division(val1: any, tipo1: Tipo, val2: any, tipo2: Tipo, actual: Ambito, global: Ambito, ast: AST): any {
+        let prim1: TipoPrimitivo = tipo1.getPrimitivo();
+        let prim2: TipoPrimitivo = tipo2.getPrimitivo();
         // TIPO DOUBLE
         if (
-            (prim1 == TipoPrimitivo.Double && 
-            (prim2 == TipoPrimitivo.Integer || prim2 == TipoPrimitivo.Double || prim2 == TipoPrimitivo.Char))
-            || ( prim2 == TipoPrimitivo.Double &&
-            (prim1 == TipoPrimitivo.Integer || prim1 == TipoPrimitivo.Double || prim1 == TipoPrimitivo.Char))
-        ){
+            (prim1 == TipoPrimitivo.Double &&
+                (prim2 == TipoPrimitivo.Integer || prim2 == TipoPrimitivo.Double || prim2 == TipoPrimitivo.Char))
+            || (prim2 == TipoPrimitivo.Double &&
+                (prim1 == TipoPrimitivo.Integer || prim1 == TipoPrimitivo.Double || prim1 == TipoPrimitivo.Char))
+        ) {
             this.tipo = new Tipo(TipoPrimitivo.Double);
             return val1 / val2;
         }
         // TIPO INTEGER
         else if (
-            (prim1 == TipoPrimitivo.Integer && 
-            (prim2 == TipoPrimitivo.Integer || prim2 == TipoPrimitivo.Double || prim2 == TipoPrimitivo.Char))
-            || ( prim2 == TipoPrimitivo.Integer &&
-            (prim1 == TipoPrimitivo.Integer || prim1 == TipoPrimitivo.Double || prim1 == TipoPrimitivo.Char))
-        )
-        {
+            (prim1 == TipoPrimitivo.Integer &&
+                (prim2 == TipoPrimitivo.Integer || prim2 == TipoPrimitivo.Double || prim2 == TipoPrimitivo.Char))
+            || (prim2 == TipoPrimitivo.Integer &&
+                (prim1 == TipoPrimitivo.Integer || prim1 == TipoPrimitivo.Double || prim1 == TipoPrimitivo.Char))
+        ) {
             this.tipo = new Tipo(TipoPrimitivo.Integer);
             return val1 / val2;
-        } 
+        }
     }
+
     public Potencia(val1: any, tipo1: Tipo, val2: any, tipo2: Tipo, actual: Ambito, global: Ambito, ast: AST): any {
         let prim1: TipoPrimitivo = tipo1.getPrimitivo();
         let prim2: TipoPrimitivo = tipo2.getPrimitivo();
@@ -170,12 +244,13 @@ export class OperacionAritmetica extends Expresion {
         } else if (prim1 == TipoPrimitivo.Integer && prim2 == TipoPrimitivo.Double) {
             this.tipo = new Tipo(TipoPrimitivo.Double);
             return val1 ** val2;
-        }else if(prim1 == TipoPrimitivo.Double && prim2 == TipoPrimitivo.Integer){
+        } else if (prim1 == TipoPrimitivo.Double && prim2 == TipoPrimitivo.Integer) {
             this.tipo = new Tipo(TipoPrimitivo.Double);
             return val1 ** val2;
-        }else if (prim1 == TipoPrimitivo.Double && prim2 == TipoPrimitivo.Double) {
+        } else if (prim1 == TipoPrimitivo.Double && prim2 == TipoPrimitivo.Double) {
             this.tipo = new Tipo(TipoPrimitivo.Double);
             return val1 ** val2;
         }
     }
+
 }

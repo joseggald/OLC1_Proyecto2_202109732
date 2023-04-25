@@ -30,111 +30,104 @@ export class DeclararFuncion extends Instruccion {
         }
         if(this.tipo.getPrimitivo()==TipoPrimitivo.Integer){
             if(this.parametros.length==0){
-                let nFuncion= new Funcion(this.tipo,this.nombre,0,null,this.sentencias)
+                let nFuncion= new Funcion(this.tipo,this.nombre,0,null,this.sentencias,[])
                 actual.insertarFuncion(this.nombre,nFuncion);        
             }else{
                 let array=[];
                 for(let i = 0; i<this.parametros.length; i++){
                     if(this.parametros[i].tipo.getPrimitivo()==TipoPrimitivo.Integer){
-                        console.log(this.parametros[i].id);
-                        this.parametros[i].ejecutar(actual,global,ast);
                         array.push(this.parametros[i].id)
                     }else{
                         throw new Error("Las variables definidas no encajan con el tipo de funcion: " + this.linea + " , " + this.columna);
                     }
                 }
-                let nFuncion= new Funcion(this.tipo,this.nombre,this.parametros.length,array,this.sentencias)
+                let nFuncion= new Funcion(this.tipo,this.nombre,this.parametros.length,array,this.sentencias,this.parametros)
                 actual.insertarFuncion(this.nombre,nFuncion);
             }
         }
         if(this.tipo.getPrimitivo()==TipoPrimitivo.Double){
             if(this.parametros.length==0){
-                let nFuncion= new Funcion(this.tipo,this.nombre,0,null,this.sentencias)
+                let nFuncion= new Funcion(this.tipo,this.nombre,0,null,this.sentencias,[])
                 actual.insertarFuncion(this.nombre,nFuncion);        
             }else{
                 let array=[];
                 for(let i = 0; i<this.parametros.length; i++){
                     if(this.parametros[i].tipo.getPrimitivo()==TipoPrimitivo.Double){
                         console.log(this.parametros[i].id);
-                        this.parametros[i].ejecutar(actual,global,ast);
-                        array.push(this.parametros[i].id)
+                        array.push(this.parametros[i].id);
                     }else{
                         throw new Error("Las variables definidas no encajan con el tipo de funcion: " + this.linea + " , " + this.columna);
                     }
                 }
-                let nFuncion= new Funcion(this.tipo,this.nombre,this.parametros.length,array,this.sentencias)
+                let nFuncion= new Funcion(this.tipo,this.nombre,this.parametros.length,array,this.sentencias,this.parametros)
                 actual.insertarFuncion(this.nombre,nFuncion);
             }
         }
         if(this.tipo.getPrimitivo()==TipoPrimitivo.String){
             if(this.parametros.length==0){
-                let nFuncion= new Funcion(this.tipo,this.nombre,0,null,this.sentencias)
+                let nFuncion= new Funcion(this.tipo,this.nombre,0,null,this.sentencias,[])
                 actual.insertarFuncion(this.nombre,nFuncion);        
             }else{
                 let array=[];
                 for(let i = 0; i<this.parametros.length; i++){
                     if(this.parametros[i].tipo.getPrimitivo()==TipoPrimitivo.String){
                         console.log(this.parametros[i].id);
-                        this.parametros[i].ejecutar(actual,global,ast);
                         array.push(this.parametros[i].id)
                     }else{
                         throw new Error("Las variables definidas no encajan con el tipo de funcion: " + this.linea + " , " + this.columna);
                     }
                 }
-                let nFuncion= new Funcion(this.tipo,this.nombre,this.parametros.length,array,this.sentencias)
+                let nFuncion= new Funcion(this.tipo,this.nombre,this.parametros.length,array,this.sentencias,this.parametros)
                 actual.insertarFuncion(this.nombre,nFuncion);
             }
         }
         if(this.tipo.getPrimitivo()==TipoPrimitivo.Char){
             if(this.parametros.length==0){
-                let nFuncion= new Funcion(this.tipo,this.nombre,0,null,this.sentencias)
+                let nFuncion= new Funcion(this.tipo,this.nombre,0,null,this.sentencias,[])
                 actual.insertarFuncion(this.nombre,nFuncion);        
             }else{
                 let array=[];
                 for(let i = 0; i<this.parametros.length; i++){
                     if(this.parametros[i].tipo.getPrimitivo()==TipoPrimitivo.Char){
                         console.log(this.parametros[i].id);
-                        this.parametros[i].ejecutar(actual,global,ast);
                         array.push(this.parametros[i].id)
                     }else{
                         throw new Error("Las variables definidas no encajan con el tipo de funcion: " + this.linea + " , " + this.columna);
                     }
                 }
-                let nFuncion= new Funcion(this.tipo,this.nombre,this.parametros.length,array,this.sentencias)
+                let nFuncion= new Funcion(this.tipo,this.nombre,this.parametros.length,array,this.sentencias, this.parametros)
                 actual.insertarFuncion(this.nombre,nFuncion);
             }
         }
         if(this.tipo.getPrimitivo()==TipoPrimitivo.Boolean){
             if(this.parametros.length==0){
-                let nFuncion= new Funcion(this.tipo,this.nombre,0,null,this.sentencias)
+                let nFuncion= new Funcion(this.tipo,this.nombre,0,null,this.sentencias,[])
                 actual.insertarFuncion(this.nombre,nFuncion);        
             }else{
                 let array=[];
                 for(let i = 0; i<this.parametros.length; i++){
                     if(this.parametros[i].tipo.getPrimitivo()==TipoPrimitivo.Boolean){
                         console.log(this.parametros[i].id);
-                        this.parametros[i].ejecutar(actual,global,ast);
                         array.push(this.parametros[i].id)
                     }else{
                         throw new Error("Las variables definidas no encajan con el tipo de funcion: " + this.linea + " , " + this.columna);
                     }
                 }
-                let nFuncion= new Funcion(this.tipo,this.nombre,this.parametros.length,array,this.sentencias)
+                let nFuncion= new Funcion(this.tipo,this.nombre,this.parametros.length,array,this.sentencias,this.parametros)
                 actual.insertarFuncion(this.nombre,nFuncion);
             }
         }
         if(this.tipo.getPrimitivo()==TipoPrimitivo.Void){
             if(this.parametros.length==0){
-                let nFuncion= new Funcion(this.tipo,this.nombre,0,null,this.sentencias)
+                let nFuncion= new Funcion(this.tipo,this.nombre,0,null,this.sentencias,[])
                 actual.insertarFuncion(this.nombre,nFuncion);        
             }else{
                 let array=[];
                 for(let i = 0; i<this.parametros.length; i++){
                     console.log(this.parametros[i].id);
-                    this.parametros[i].ejecutar(actual,global,ast);
                     array.push(this.parametros[i].id)
                 }
-                let nFuncion= new Funcion(this.tipo,this.nombre,this.parametros.length,array,this.sentencias)
+                let nFuncion= new Funcion(this.tipo,this.nombre,this.parametros.length,array,this.sentencias,this.parametros)
                 actual.insertarFuncion(this.nombre,nFuncion);
             }
         }

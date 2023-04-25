@@ -21,8 +21,10 @@ export class LlamadaFuncion extends Expresion {
     public getValor(actual: Ambito, global: Ambito, ast: AST) {
        
         let a;
+        let ambito = new Ambito(actual)
         if(global.existeFuncion(this.nombre)) {
             let actual_func= global.getFuncion(this.nombre)
+
             if(actual_func.tipo.getPrimitivo()==TipoPrimitivo.Void){   
                 if(actual_func.getCantParam()==0){
                     let sentencias=actual_func.getSetencias();
@@ -33,6 +35,8 @@ export class LlamadaFuncion extends Expresion {
                                 if(s=="return"){
                                     return;
                                 }else{
+                                    let tipoData=new Tipo(TipoPrimitivo.Integer);
+                                    this.tipo=tipoData;
                                     return s;
                                 }
                             } 
@@ -44,6 +48,8 @@ export class LlamadaFuncion extends Expresion {
                                 if(a=="return"){
                                     return;
                                 }else{
+                                    let tipoData=new Tipo(TipoPrimitivo.Integer);
+                                    this.tipo=tipoData;
                                     return a;
                                 }
                             } 
@@ -52,8 +58,10 @@ export class LlamadaFuncion extends Expresion {
                 }else{
 
                     if(this.lista_exp.length==actual_func.idParam.length){
-                        for(let i=0; i<this.lista_exp.length; i++){
-                            let variable = actual.getVariable(actual_func.idParam[i]);
+                        
+                       for(let i=0; i<this.lista_exp.length; i++){
+                            actual_func.declaraciones[i].ejecutar(ambito,global,ast);
+                            let variable = ambito.getVariable(actual_func.idParam[i]);
                             if(variable.getTipo().getPrimitivo()==TipoPrimitivo.Integer){
                                 if(Number.isInteger(this.lista_exp[i].getValor(actual,global,ast))){
                                     variable.asignarValor(this.lista_exp[i].getValor(actual,global,ast))
@@ -90,22 +98,21 @@ export class LlamadaFuncion extends Expresion {
                         let sentencias=actual_func.getSetencias();
                         for(let sentencia of sentencias){ 
                             if (sentencia instanceof Instruccion) {
-                                let s=sentencia.ejecutar(actual, global, ast); 
+                                let s=sentencia.ejecutar(ambito, global, ast); 
                                 if (s!=undefined) {
                                     if(s=="return"){
-                                        console.log("return func")
                                         return;
-                                    }else if(s==Expresion){
-                                        return s;
+                                    }else{
+                                        throw new Error("ERROR => Las funciones void no pueden retornar valores");
                                     }
-                                }       
+                                }        
                             }
                             if(sentencia instanceof Expresion){
-                                let a=sentencia.getValor(actual, global, ast);  
+                                let a=sentencia.getValor(ambito, global, ast);  
                                 if(a=="return"){
                                     return;
-                                }else if(a==Expresion){
-                                    return a;
+                                }else{
+                                    throw new Error("ERROR => Las funciones void no pueden retornar valores");
                                 }
                                
                             } 
@@ -116,13 +123,12 @@ export class LlamadaFuncion extends Expresion {
                     
                 }
             }
-            /*
             if(actual_func.tipo.getPrimitivo()==TipoPrimitivo.Integer){
                 if(actual_func.getCantParam()==0){
                     let sentencias=actual_func.getSetencias();
                     for(let sentencia of sentencias){ 
                         if(sentencia instanceof Instruccion) {
-                            let s=sentencia.ejecutar(actual, global, ast); 
+                            let s=sentencia.ejecutar(ambito, global, ast); 
                                 if (s!=undefined) {
                                     if(s=="return"){
                                         return;
@@ -132,7 +138,7 @@ export class LlamadaFuncion extends Expresion {
                                 } 
                         }
                         if(sentencia instanceof Expresion){
-                            a=sentencia.getValor(actual, global, ast);
+                            a=sentencia.getValor(ambito, global, ast);
                             if(sentencia instanceof ReturnPR){
                                 if (a=="return"){
                                     let tipoData=new Tipo(TipoPrimitivo.Integer);
@@ -149,19 +155,20 @@ export class LlamadaFuncion extends Expresion {
                 }else{
                     if(this.lista_exp.length==actual_func.idParam.length){
                         for(let i=0; i<this.lista_exp.length; i++){
-                            let variable = actual.getVariable(actual_func.idParam[i]);
+                            actual_func.declaraciones[i].ejecutar(ambito,global,ast);
+                            let variable = ambito.getVariable(actual_func.idParam[i]);
                             if(variable.getTipo().getPrimitivo()==TipoPrimitivo.Integer){
                                 if(Number.isInteger(this.lista_exp[i].getValor(actual,global,ast))){
                                     variable.asignarValor(this.lista_exp[i].getValor(actual,global,ast))
                                 }else{
-                                    throw new Error("Los parametros mandados no son del mismo tipo.");
+                                    throw new Error("Los parametros mandados no son del mismo tipo."+this.columna+"  INT  "+this.linea);
                                 }
                             }
-                        }
+                        }    
                         let sentencias=actual_func.getSetencias();
                         for(let sentencia of sentencias){ 
                             if(sentencia instanceof Instruccion) {
-                                let s=sentencia.ejecutar(actual, global, ast); 
+                                let s=sentencia.ejecutar(ambito, global, ast); 
                                 if (s!=undefined) {
                                     if(s=="return"){
                                         return;
@@ -171,7 +178,7 @@ export class LlamadaFuncion extends Expresion {
                                 } 
                             }
                             if(sentencia instanceof Expresion){
-                                a=sentencia.getValor(actual, global, ast);
+                                a=sentencia.getValor(ambito, global, ast);
                                 if(sentencia instanceof ReturnPR){
                                     if (a=="return"){
                                         let tipoData=new Tipo(TipoPrimitivo.Integer);
@@ -184,12 +191,12 @@ export class LlamadaFuncion extends Expresion {
                                     } 
                                 } 
                             }
-                        } 
+                        }
                     }else{
                         throw new Error("ERROR => Los parametro mandados no encajan con la dimension de la funcion");
                     }
                 }    
-            }*/
+            }
         }              
     }
 
