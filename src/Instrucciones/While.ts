@@ -22,31 +22,27 @@ export class While extends Instruccion{
        let val_cond = this.exp.getValor(actual, global, ast);
        let a;
        let ambito_local = new Ambito(actual);
-       while(val_cond) 
-       {
+       while(val_cond) {
             for(let sentencia of this.sentencias){
-                if(sentencia instanceof Instruccion) {
-                    a=sentencia.ejecutar(ambito_local, global, ast);
-                    if (sentencia instanceof Return){
-                        return;
-                    }
-                    if (sentencia instanceof If){
-                        if(a=="return"){
-                            console.log("return while")
-                            return;
-                        }      
-                    }
+                if (sentencia instanceof Instruccion){
+                    let s=sentencia.ejecutar(ambito_local, global, ast);
+                    if (s!=undefined) {
+                        if(s=="return"){
+                            return "return";
+                        }else{
+                            return s;
+                        }
+                    } 
                 }
                 if(sentencia instanceof Expresion){
-                    a=sentencia.getValor(actual, global, ast);
+                    let a=sentencia.getValor(actual, global, ast);  
                     if(sentencia instanceof ReturnPR){
                         if(a=="return"){
-                            return;
-                        }
-                        if(a!=undefined){
+                            return "return";
+                        }else{
                             return a;
-                        } 
-                    }    
+                        }
+                    }            
                 }  
             }
             val_cond = this.exp.getValor(actual, global, ast);

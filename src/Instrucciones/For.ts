@@ -28,27 +28,25 @@ export class For extends Instruccion {
         let a,b;
         while (this.condicion.getValor(ambito_local, global, ast)) {
             for (let sentencia of this.sentencias) {
-                if (sentencia instanceof Instruccion) {
-                    b=sentencia.ejecutar(ambito_local, global, ast);
-                    if (sentencia instanceof If){
-                        if(b=="return"){
-                            return;
+                if (sentencia instanceof Instruccion){
+                    let s=sentencia.ejecutar(ambito_local, global, ast);
+                    if (s!=undefined) {
+                        if(s=="return"){
+                            return "return";
+                        }else{
+                            return s;
                         }
-                        if(b!=undefined){
-                            return b;
-                        }      
-                    }
+                    } 
                 }
                 if(sentencia instanceof Expresion){
-                    a=sentencia.getValor(actual, global, ast);
+                    let a=sentencia.getValor(actual, global, ast);  
                     if(sentencia instanceof ReturnPR){
                         if(a=="return"){
-                            return;
-                        }
-                        if(a!=undefined){
+                            return "return";
+                        }else{
                             return a;
-                        } 
-                    }    
+                        }
+                    }            
                 }
             }
             this.actualizacion.ejecutar(ambito_local, global, ast);

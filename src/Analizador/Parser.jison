@@ -60,17 +60,25 @@ frac                        (?:\.[0-9]+)
 "boolean"                       {   return 'tboolean';  }
 "double"                        {   return 'tdouble';   }
 "String"                        {   return 'tstring';   }
+"char"                          {   return 'tchar';   }
 "if"                            {   return 'tif';       }
 "while"                         {   return 'twhile';    }
+"for"                           {   return 'tfor';    }
 "else"                          {   return 'telse';     }
 "void"                          {   return 'tvoid';     }
 "return"                        {   return 'treturn';   }
-"new"                          {   return 'tnew';     }
+"new"                           {   return 'tnew';     }
+"do"                            {   return 'tdo';     }
+"list"                          {   return 'tlist';     }                 
+"add"                           {   return 'tadd';     }                 
+"switch"                        {   return 'tswitch';     }                 
+"case"                        {   return 'tcase';     }                 
+"default"                        {   return 'tdefault';     }
+"toLower"                      {   return 'ttoLower';     }
+"toUpper"                      {   return 'ttoUpper';     }
 "main"                          {   return 'tmain';     }
-"for"                           {   return 'tfor';    }
-"do"                           {   return 'tdo';    }
 "print"                           {   return 'tPrint';    }
-"toUpper"                           {   return 'tToUpper';    }
+
 
 /* =================== EXPRESIONES REGULARES ===================== */
 ([a-zA-ZÑñ]|("_"[a-zA-ZÑñ]))([a-zA-ZÑñ]|[0-9]|"_")*             yytext = yytext.toLowerCase();          return 'id';
@@ -82,13 +90,15 @@ frac                        (?:\.[0-9]+)
 //Error                                                                                              return 'entero'
 
 /* ======================== SIGNOS ======================= */
-
+"$"                             {return '$'};
+"."                             {return '.'};
 "++"                            {return '++';}
 "--"                            {return '--';}
 "+"                             {return '+';}
 "-"                             {return '-';}
 "*"                             {return '*';}
 "/"                             {return '/';}
+"^"                             {return '^';}
 "%"                             {return '%';}
 "("                             {return '(';}
 ")"                             {return ')';}
@@ -97,6 +107,7 @@ frac                        (?:\.[0-9]+)
 ","                             {return ',';}
 ":"                             {return ':';}
 ";"                             {return ';';}
+"?"                             {return '?';}
 "||"                            {return '||';}
 "&&"                            {return '&&';}
 "!="                            {return '!=';}
@@ -116,18 +127,20 @@ frac                        (?:\.[0-9]+)
 
 /* ================= ASOCIATIVIDAD y PRECEDENCIA DE OPERADORES ===============
 /*Operaciones logicas*/
-%left '++' '--'
-%left '^'
 %left '||'
 %left '&&'
+%left '?'
+%left ':'
+%left '++' '--'
 %left '!=' '==' '==='
-%left '>' '<' '<=' '>=' 
-
+%left '>' '<' '<=' '>='
+ 
 /*Operaciones numericas*/
 %left '+' '-'
 %left '*' '/' '%'
-
+%right '^' 
 %right negativo '!' '(' 
+
 
 
 %start INICIO
@@ -377,6 +390,7 @@ EXP :   EXP '+' EXP                     { $$ = new OperacionAritmetica($1, $2, $
     |   EXP '-' EXP                     { $$ = new OperacionAritmetica($1, $2, $3, @2.first_line, @2.first_column);}
     |   EXP '*' EXP                     { $$ = new OperacionAritmetica($1, $2, $3, @2.first_line, @2.first_column);}
     |   EXP '/' EXP                     { $$ = new OperacionAritmetica($1, $2, $3, @2.first_line, @2.first_column);}
+    |   EXP '^' EXP                     { $$ = new OperacionAritmetica($1, $2, $3, @2.first_line, @2.first_column);}
     |   '-' EXP %prec negativo          { $$ = $2;}
     |   '(' EXP ')'                     { $$ = $2;}
     |   EXP '=='  EXP                   { $$ = new OperacionRelacional($1, $2, $3, @2.first_line, @2.first_column);}

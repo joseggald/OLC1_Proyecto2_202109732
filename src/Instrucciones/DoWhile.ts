@@ -24,15 +24,24 @@ export class DoWhile extends Instruccion {
         do {
             for (let sentencia of this.sentencias) {
                 if (sentencia instanceof Instruccion){
-                    sentencia.ejecutar(ambito_local, global, ast);
+                    let s=sentencia.ejecutar(ambito_local, global, ast);
+                    if (s!=undefined) {
+                        if(s=="return"){
+                            return "return";
+                        }else{
+                            return s;
+                        }
+                    } 
                 }
                 if(sentencia instanceof Expresion){
-                    a=sentencia.getValor(actual, global, ast);
+                    let a=sentencia.getValor(actual, global, ast);  
                     if(sentencia instanceof ReturnPR){
                         if(a=="return"){
-                            return;
+                            return "return";
+                        }else{
+                            return a;
                         }
-                    }    
+                    }            
                 }
             }
             val_cond = this.exp.getValor(actual, global, ast);

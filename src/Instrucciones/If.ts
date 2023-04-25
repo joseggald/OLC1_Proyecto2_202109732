@@ -32,29 +32,53 @@ export class If extends Instruccion {
 
         if ( condicion ){
             let ambito_if = new Ambito(actual);
-            
             for(let sentencia of this.sentencias){
                 if (sentencia instanceof Instruccion) {
-                    sentencia.ejecutar(actual, global, ast);        
+                    let s=sentencia.ejecutar(ambito_if, global, ast); 
+                    if (s!=undefined){
+                        if(s=="return"){
+                            console.log("return if")
+                            return "return";
+                        }else if(s==Expresion){
+                            return s;
+                        }
+                    }       
                 }
                 if(sentencia instanceof Expresion){
-                    let a=sentencia.getValor(actual, global, ast);  
-                } 
+                    let a=sentencia.getValor(ambito_if, global, ast);  
+                    console.log(a)
+                    if(a=="return"){
+                        return "return";
+                    }else if(a==Expresion){
+                        return a;
+                    }
+                   
+                }
             }
 
         }else{
             let ambito_else = new Ambito(actual);
             for(let sentencia of this.sentencias_else){
                 if (sentencia instanceof Instruccion) {
-                    let s=sentencia.ejecutar(actual, global, ast);
+                    let s=sentencia.ejecutar(ambito_else, global, ast); 
+                    if (s!=undefined) {
+                        if(s=="return"){
+                            console.log("return func")
+                            return "return";
+                        }else if(s==Expresion){
+                            return s;
+                        }
+                    }       
                 }
                 if(sentencia instanceof Expresion){
-                    let a=sentencia.getValor(actual, global, ast);
-
+                    let a=sentencia.getValor(ambito_else, global, ast);  
+                    if(a=="return"){
+                        return "return";
+                    }else if(a==Expresion){
+                        return a;
+                    }
                 }
             }
-        }
-        
+        }     
     }
-
 }

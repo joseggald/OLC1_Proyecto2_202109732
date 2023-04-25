@@ -21,21 +21,36 @@ export class LlamadaFuncion extends Expresion {
     public getValor(actual: Ambito, global: Ambito, ast: AST) {
        
         let a;
-        if(actual.existeFuncion(this.nombre)) {
-            console.log("existe");
-            let actual_func= actual.getFuncion(this.nombre)
-            
+        if(global.existeFuncion(this.nombre)) {
+            let actual_func= global.getFuncion(this.nombre)
             if(actual_func.tipo.getPrimitivo()==TipoPrimitivo.Void){   
                 if(actual_func.getCantParam()==0){
                     let sentencias=actual_func.getSetencias();
                     for(let sentencia of sentencias){ 
-                        if(sentencia instanceof Instruccion) {
-                            a=sentencia.ejecutar(actual, global, ast);
+                        if (sentencia instanceof Instruccion) {
+                            let s=sentencia.ejecutar(actual, global, ast); 
+                            if (s!=undefined) {
+                                if(s=="return"){
+                                    return;
+                                }else{
+                                    return s;
+                                }
+                            } 
+                                     
                         }
-                        if(sentencia instanceof Expresion) sentencia.getValor(actual, global, ast);   
-                    }    
-                    return;        
+                        if(sentencia instanceof Expresion){
+                            let a=sentencia.getValor(actual, global, ast);  
+                            if(sentencia instanceof ReturnPR){
+                                if(a=="return"){
+                                    return;
+                                }else{
+                                    return a;
+                                }
+                            } 
+                        }  
+                    }          
                 }else{
+
                     if(this.lista_exp.length==actual_func.idParam.length){
                         for(let i=0; i<this.lista_exp.length; i++){
                             let variable = actual.getVariable(actual_func.idParam[i]);
@@ -48,7 +63,6 @@ export class LlamadaFuncion extends Expresion {
                             }
                             if(variable.getTipo().getPrimitivo()==TipoPrimitivo.Double){
                                 variable.asignarValor(this.lista_exp[i].getValor(actual,global,ast))
-                                console.log(variable.getValor());
                             }
                             if(variable.getTipo().getPrimitivo()==TipoPrimitivo.String){
                                 if( typeof this.lista_exp[i].getValor(actual,global,ast) === "string" ){
@@ -72,27 +86,50 @@ export class LlamadaFuncion extends Expresion {
                                 }
                             }
                         }
+
                         let sentencias=actual_func.getSetencias();
                         for(let sentencia of sentencias){ 
-                            if(sentencia instanceof Instruccion) {
-                                sentencia.ejecutar(actual, global, ast);
+                            if (sentencia instanceof Instruccion) {
+                                let s=sentencia.ejecutar(actual, global, ast); 
+                                if (s!=undefined) {
+                                    if(s=="return"){
+                                        console.log("return func")
+                                        return;
+                                    }else if(s==Expresion){
+                                        return s;
+                                    }
+                                }       
                             }
-                            if(sentencia instanceof Expresion) sentencia.getValor(actual, global, ast);   
+                            if(sentencia instanceof Expresion){
+                                let a=sentencia.getValor(actual, global, ast);  
+                                if(a=="return"){
+                                    return;
+                                }else if(a==Expresion){
+                                    return a;
+                                }
+                               
+                            } 
                         } 
-                        return;
                     }else{
                         throw new Error("ERROR => Los parametro mandados no encajan con la dimension de la funcion");
                     }
                     
                 }
             }
+            /*
             if(actual_func.tipo.getPrimitivo()==TipoPrimitivo.Integer){
                 if(actual_func.getCantParam()==0){
                     let sentencias=actual_func.getSetencias();
                     for(let sentencia of sentencias){ 
                         if(sentencia instanceof Instruccion) {
-                            let b;
-                            a=sentencia.ejecutar(actual, global, ast);
+                            let s=sentencia.ejecutar(actual, global, ast); 
+                                if (s!=undefined) {
+                                    if(s=="return"){
+                                        return;
+                                    }else{
+                                        return s;
+                                    }
+                                } 
                         }
                         if(sentencia instanceof Expresion){
                             a=sentencia.getValor(actual, global, ast);
@@ -124,7 +161,14 @@ export class LlamadaFuncion extends Expresion {
                         let sentencias=actual_func.getSetencias();
                         for(let sentencia of sentencias){ 
                             if(sentencia instanceof Instruccion) {
-                                let s=sentencia.ejecutar(actual, global, ast);
+                                let s=sentencia.ejecutar(actual, global, ast); 
+                                if (s!=undefined) {
+                                    if(s=="return"){
+                                        return;
+                                    }else{
+                                        return s;
+                                    }
+                                } 
                             }
                             if(sentencia instanceof Expresion){
                                 a=sentencia.getValor(actual, global, ast);
@@ -145,7 +189,7 @@ export class LlamadaFuncion extends Expresion {
                         throw new Error("ERROR => Los parametro mandados no encajan con la dimension de la funcion");
                     }
                 }    
-            }
+            }*/
         }              
     }
 
