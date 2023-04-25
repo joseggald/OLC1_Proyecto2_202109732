@@ -5,10 +5,13 @@
     let DeclararVariable            =   require("../Instrucciones/DeclararVariable").DeclararVariable; 
     let DeclararFuncion             =   require("../Instrucciones/DeclararFuncion").DeclararFuncion;
     let DeclararArreglo             =   require("../Instrucciones/DeclararArreglo").DeclararArreglo;
+    let DeclararLista               =   require("../Instrucciones/DeclararLista").DeclararLista;
     let Asignacion                  =   require("../Instrucciones/Asignacion").Asignacion;
     let AsignacionVector            =   require("../Instrucciones/AsignacionVector").AsignacionVector;
+    let Ternario                    =   require("../Expresiones/Ternario").Ternario;
     let If                          =   require("../Instrucciones/If").If;
     let AccesoVariable              =   require("../Expresiones/AccesoVariable").AccesoVariable;
+    let AccesoLista                 =   require("../Expresiones/AccesoLista").AccesoLista;
     let AccesoVector                =   require("../Expresiones/AccesoVector").AccesoVector;
     let LlamadaFuncion              =   require("../Expresiones/LlamadaFuncion").LlamadaFuncion;
     let LlamadaPrint                =   require("../Expresiones/LlamadaPrint").LlamadaPrint;
@@ -23,6 +26,9 @@
     let Decremento                  =    require("../Instrucciones/Decremento").Decremento;
     let For                         =    require("../Instrucciones/For").For;
     let DoWhile                     =   require("../Instrucciones/DoWhile").DoWhile;
+    let Casteo                      =    require("../Expresiones/Casteo").Casteo;
+    let InsertarLista               =    require("../Instrucciones/InsertarLista").InsertarLista;
+    let ModificarLista              =    require("../Instrucciones/ModificarLista").ModificarLista;
 %}
 /* description: Parses end executes mathematical expressions. */
 
@@ -120,7 +126,7 @@ frac                        (?:\.[0-9]+)
 /*Operaciones numericas*/
 %left '+' '-'
 %left '*' '/' '%'
-%right '^^' 
+
 %right negativo '!' '(' 
 
 
@@ -151,19 +157,6 @@ SENTENCIAS :    SENTENCIAS SENTENCIA
             }
 ;
 
-SENTENCIAS_FUNC :    SENTENCIAS_FUNC SENTENCIA_FUNC
-            {
-                $1.push($2);
-                $$ = $1;
-            }
-            |   SENTENCIA
-            {
-                let lstsent = [];
-                lstsent.push($1);
-                $$ = lstsent;
-            }
-;
-
 BLOQUE_SENTENCAS : '{' SENTENCIAS '}'
                 {
                        $$ = $2;
@@ -174,18 +167,11 @@ BLOQUE_SENTENCAS : '{' SENTENCIAS '}'
                 }
 ;
 
-BLOQUE_SENTENCAS_FUNC : '{' SENTENCIAS_FUNC '}'
-                {
-                       $$ = $2;
-                }
-                |  '{' '}'
-                {
-                        $$ = [];
-                }
-;
 
 SENTENCIA :     DECLARACION ';'             { $$ = $1; }
             |   FUNCION                     { $$ = $1; }
+            |   LISTA_ADD                   { $$ = $1; }
+            |   LISTA_MODIFICAR  ';'        { $$ = $1; }
             |   ASIGNACION                  { $$ = $1; }
             |   VECTOR_ADD                  { $$ = $1; }
             |   IF                          { $$ = $1; }
@@ -195,22 +181,12 @@ SENTENCIA :     DECLARACION ';'             { $$ = $1; }
             |   DO_WHILE                    { $$ = $1; }
             |   INCREMENTO       ';'        { $$ = $1; }
             |   DECREMENTO       ';'        { $$ = $1; }
-            |   PRINT       ';'        { $$ = $1; }
+            |   PRINT       ';'             { $$ = $1; }
+            |   MAIN ';'                    { $$ = $1; }
+            |   RETURN                    { $$ = $1; }
 ;
 
-SENTENCIA_FUNC :     DECLARACION ';'             { $$ = $1; }
-            |   FUNCION                     { $$ = $1; }
-            |   ASIGNACION                  { $$ = $1; }
-            |   VECTOR_ADD                  { $$ = $1; }
-            |   IF                          { $$ = $1; }
-            |   LLAMADA_FUNCION  ';'        { $$ = $1; }
-            |   WHILE                       { $$ = $1; }
-            |   FOR                         { $$ = $1; }
-            |   RETURN                      { $$ = $1; }
-            |   DO_WHILE                    { $$ = $1; }
-            |   INCREMENTO       ';'        { $$ = $1; }
-            |   DECREMENTO       ';'        { $$ = $1; }
-            |   PRINT       ';'        { $$ = $1; }
+MAIN : tmain LLAMADA_FUNCION    { $$ = $1; }
 ;
 
 PRINT : tPrint '(' LISTA_EXP ')' { $$ = new LlamadaPrint($1, $3, @1.first_line, @1.first_column);    }
@@ -262,6 +238,30 @@ VECTOR_ADD  :   id '[' entero ']' '=' EXP ';'
             }
 ;
 
+LISTA_ADD: id '.' tadd '(' EXP ')' ';'
+            {
+                $$ = new InsertarLista($1, $5, @1.first_line, @1.first_column);
+            }
+;
+
+TERNARIA: EXP '?' EXP ':' EXP
+        {
+            $$ = new Ternario($1, $3, $5, @1.first_line, @1.first_column);
+        }
+;
+
+CASTEO: '(' TIPO ')' EXP
+    {
+        $$ = new Casteo($2, $4, @1.first_line, @1.first_column);
+    }
+;
+
+LISTA_MODIFICAR: id '[' '[' entero ']' ']' '=' EXP
+            {
+                $$ = new ModificarLista($1, $4, $8, @1.first_line, @1.first_column);
+            }
+;
+
 IF      :   tif '(' EXP ')' BLOQUE_SENTENCAS
         {
             $$ = new If($3, $5, [], @1.first_line, @1.first_column);
@@ -306,19 +306,19 @@ WHILE   : twhile '(' EXP ')' BLOQUE_SENTENCAS
         }
 ;
 
-FUNCION:        TIPO    id '(' LISTA_PARAM ')' BLOQUE_SENTENCAS_FUNC
+FUNCION:        TIPO    id '(' LISTA_PARAM ')' BLOQUE_SENTENCAS
             {
                 $$ = new DeclararFuncion($1, $2, $4, $6, @2.first_line, @2.first_column);
             }
-            |   tvoid   id '(' LISTA_PARAM ')' BLOQUE_SENTENCAS_FUNC
+            |   tvoid   id '(' LISTA_PARAM ')' BLOQUE_SENTENCAS
             {
                 $$ = new DeclararFuncion(new Tipo(TipoPrimitivo.Void), $2, $4, $6, @2.first_line, @2.first_column);
             }
-            |   TIPO    id '('  ')' BLOQUE_SENTENCAS_FUNC
+            |   TIPO    id '('  ')' BLOQUE_SENTENCAS
             {
                 $$ = new DeclararFuncion($1, $2, [], $5, @2.first_line, @2.first_column);
             }
-            |   tvoid   id '('  ')' BLOQUE_SENTENCAS_FUNC
+            |   tvoid   id '('  ')' BLOQUE_SENTENCAS
             {
                 $$ = new DeclararFuncion(new Tipo(TipoPrimitivo.Void), $2, [], $5, @2.first_line, @2.first_column);
             }
@@ -379,7 +379,6 @@ EXP :   EXP '+' EXP                     { $$ = new OperacionAritmetica($1, $2, $
     |   EXP '/' EXP                     { $$ = new OperacionAritmetica($1, $2, $3, @2.first_line, @2.first_column);}
     |   '-' EXP %prec negativo          { $$ = $2;}
     |   '(' EXP ')'                     { $$ = $2;}
-    |   EXP '++'                        { $$ = $2;}
     |   EXP '=='  EXP                   { $$ = new OperacionRelacional($1, $2, $3, @2.first_line, @2.first_column);}
     |   EXP '!='  EXP                   { $$ = new OperacionRelacional($1, $2, $3, @2.first_line, @2.first_column);}
     |   EXP '<'   EXP                   { $$ = new OperacionRelacional($1, $2, $3, @2.first_line, @2.first_column);}
@@ -397,4 +396,6 @@ EXP :   EXP '+' EXP                     { $$ = new OperacionAritmetica($1, $2, $
     |   cadena                          { $$ = new Valor($1, "string", @1.first_line, @1.first_column); }
     |   ttrue                           { $$ = new Valor($1, "true", @1.first_line, @1.first_column);   }
     |   tfalse                          { $$ = new Valor($1, "false", @1.first_line, @1.first_column);  }
+    |   TERNARIA                        { $$ = $1;}
+    |   CASTEO                          { $$ = $1;}
 ;

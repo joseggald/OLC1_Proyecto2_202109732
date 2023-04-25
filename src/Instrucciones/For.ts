@@ -32,7 +32,6 @@ export class For extends Instruccion {
                     b=sentencia.ejecutar(ambito_local, global, ast);
                     if (sentencia instanceof If){
                         if(b=="return"){
-                            console.log("return for")
                             return;
                         }
                         if(b!=undefined){

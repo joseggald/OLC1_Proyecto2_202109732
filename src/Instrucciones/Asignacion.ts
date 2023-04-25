@@ -26,12 +26,23 @@ export class Asignacion extends Instruccion {
         }
 
         let valor_asig = this.exp.getValor(actual, global, ast);
-        if(variable.getTipo().getPrimitivo() != this.exp.tipo.getPrimitivo()) {
-            throw new Error("ERROR => El tipo del valor asignado no corresponde a la variable " + this.id);
+        if(this.exp.tipo.getPrimitivo()==TipoPrimitivo.Integer){
+            if(variable.getTipo().getPrimitivo()==TipoPrimitivo.Double){
+                variable.asignarValor(valor_asig); 
+            }else if(variable.getTipo().getPrimitivo()==TipoPrimitivo.Integer){
+                variable.asignarValor(valor_asig);
+            }else{
+                throw new Error("ERROR => El tipo del valor asignado no corresponde a la variable " + this.id);
+            }
+        }else{
+            
+            if(variable.getTipo().getPrimitivo()==TipoPrimitivo.String || variable.getTipo().getPrimitivo()==TipoPrimitivo.Char){
+                variable.asignarValor(valor_asig);
+            }else {
+                throw new Error("ERROR => El tipo del valor asignado no corresponde a la variable " + this.id);
+            }
         }
-
-        variable.asignarValor(valor_asig);
-
+        
     }
 
 }

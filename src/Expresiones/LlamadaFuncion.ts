@@ -33,57 +33,53 @@ export class LlamadaFuncion extends Expresion {
                             a=sentencia.ejecutar(actual, global, ast);
                         }
                         if(sentencia instanceof Expresion) sentencia.getValor(actual, global, ast);   
-                    }            
+                    }    
+                    return;        
                 }else{
-                    console.log(this.lista_exp.length+" ******** "+actual_func.idParam.length);
-
                     if(this.lista_exp.length==actual_func.idParam.length){
                         for(let i=0; i<this.lista_exp.length; i++){
-
                             let variable = actual.getVariable(actual_func.idParam[i]);
                             if(variable.getTipo().getPrimitivo()==TipoPrimitivo.Integer){
                                 if(Number.isInteger(this.lista_exp[i].getValor(actual,global,ast))){
                                     variable.asignarValor(this.lista_exp[i].getValor(actual,global,ast))
                                 }else{
-                                    throw new Error("Los parametros mandados no son del mismo tipo.");
+                                    throw new Error("Los parametros mandados no son del mismo tipo."+this.columna+"  INT  "+this.linea);
                                 }
                             }
                             if(variable.getTipo().getPrimitivo()==TipoPrimitivo.Double){
-                                if( typeof this.lista_exp[i].getValor(actual,global,ast) === "number" && !Number.isInteger(this.lista_exp[i].getValor(actual,global,ast))){
-                                    variable.asignarValor(this.lista_exp[i].getValor(actual,global,ast))
-                                }else{
-                                    throw new Error("Los parametros mandados no son del mismo tipo.");
-                                }
+                                variable.asignarValor(this.lista_exp[i].getValor(actual,global,ast))
+                                console.log(variable.getValor());
                             }
                             if(variable.getTipo().getPrimitivo()==TipoPrimitivo.String){
                                 if( typeof this.lista_exp[i].getValor(actual,global,ast) === "string" ){
                                     variable.asignarValor(this.lista_exp[i].getValor(actual,global,ast))
                                 }else{
-                                    throw new Error("Los parametros mandados no son del mismo tipo.");
+                                    throw new Error("Los parametros mandados no son del mismo tipo."+this.columna+"  STRING  "+this.linea);
                                 }
                             }
                             if(variable.getTipo().getPrimitivo()==TipoPrimitivo.Char){
                                 if( typeof this.lista_exp[i].getValor(actual,global,ast) === "string" ){
                                     variable.asignarValor(this.lista_exp[i].getValor(actual,global,ast))
                                 }else{
-                                    throw new Error("Los parametros mandados no son del mismo tipo.");
+                                    throw new Error("Los parametros mandados no son del mismo tipo."+this.columna+"  CHAR  "+this.linea);
                                 }
                             }
                             if(variable.getTipo().getPrimitivo()==TipoPrimitivo.Boolean){
                                 if( typeof this.lista_exp[i].getValor(actual,global,ast) === "boolean" ){
                                     variable.asignarValor(this.lista_exp[i].getValor(actual,global,ast))
                                 }else{
-                                    throw new Error("Los parametros mandados no son del mismo tipo.");
+                                    throw new Error("Los parametros mandados no son del mismo tipo."+this.columna+"  BOOL  "+this.linea);
                                 }
                             }
                         }
                         let sentencias=actual_func.getSetencias();
                         for(let sentencia of sentencias){ 
                             if(sentencia instanceof Instruccion) {
-                                a=sentencia.ejecutar(actual, global, ast);
+                                sentencia.ejecutar(actual, global, ast);
                             }
                             if(sentencia instanceof Expresion) sentencia.getValor(actual, global, ast);   
                         } 
+                        return;
                     }else{
                         throw new Error("ERROR => Los parametro mandados no encajan con la dimension de la funcion");
                     }
@@ -109,8 +105,7 @@ export class LlamadaFuncion extends Expresion {
                                     let tipoData=new Tipo(TipoPrimitivo.Integer);
                                     this.tipo=tipoData;
                                     return a;
-                                }
-                                
+                                } 
                             }
                         }    
                     }            
@@ -130,29 +125,25 @@ export class LlamadaFuncion extends Expresion {
                         for(let sentencia of sentencias){ 
                             if(sentencia instanceof Instruccion) {
                                 let s=sentencia.ejecutar(actual, global, ast);
-                                if(s=="return"){
-                                    return;
-                                }  
-                                if(s!=undefined){
-                                    return s;
-                                } 
                             }
                             if(sentencia instanceof Expresion){
                                 a=sentencia.getValor(actual, global, ast);
-                               if(sentencia instanceof ReturnPR){
-                                    if(a=="return"){
+                                if(sentencia instanceof ReturnPR){
+                                    if (a=="return"){
+                                        let tipoData=new Tipo(TipoPrimitivo.Integer);
+                                        this.tipo=tipoData;
                                         return;
-                                    }  
-                                    if(a!=undefined){
+                                    }else{
+                                        let tipoData=new Tipo(TipoPrimitivo.Integer);
+                                        this.tipo=tipoData;
                                         return a;
                                     } 
-                               }    
+                                } 
                             }
                         } 
                     }else{
                         throw new Error("ERROR => Los parametro mandados no encajan con la dimension de la funcion");
                     }
-                    
                 }    
             }
         }              
