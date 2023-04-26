@@ -4,7 +4,6 @@ import { Expresion } from "../Entorno/Expresion";
 import { Instruccion } from "../Entorno/Instruccion";
 import { Tipo } from "../Entorno/Simbolos/Tipo";
 import { TipoPrimitivo } from '../Entorno/Simbolos/TipoPrimitivo';
-import { If } from "../Instrucciones/If";
 import { ReturnPR } from "./ReturnPR";
 
 export class LlamadaFuncion extends Expresion {
@@ -127,8 +126,12 @@ export class LlamadaFuncion extends Expresion {
                             let s=sentencia.ejecutar(ambito, global, ast); 
                                 if (s!=undefined) {
                                     if(s=="return"){
+                                        let tipoData=new Tipo(TipoPrimitivo.Integer);
+                                        this.tipo=tipoData;
                                         return;
-                                    }else{
+                                    }else if(Number.isInteger(s)){
+                                        let tipoData=new Tipo(TipoPrimitivo.Integer);
+                                        this.tipo=tipoData;
                                         return s;
                                     }
                                 } 
@@ -140,7 +143,7 @@ export class LlamadaFuncion extends Expresion {
                                     let tipoData=new Tipo(TipoPrimitivo.Integer);
                                     this.tipo=tipoData;
                                     return;
-                                }else{
+                                }else if(Number.isInteger(a)){
                                     let tipoData=new Tipo(TipoPrimitivo.Integer);
                                     this.tipo=tipoData;
                                     return a;
@@ -168,9 +171,11 @@ export class LlamadaFuncion extends Expresion {
                                 if (s!=undefined) {
                                     if(s=="return"){
                                         return;
-                                    }else{
+                                    }else if(Number.isInteger(s)){
+                                        let tipoData=new Tipo(TipoPrimitivo.Integer);
+                                        this.tipo=tipoData;
                                         return s;
-                                    }
+                                    } 
                                 } 
                             }
                             if(sentencia instanceof Expresion){
@@ -180,7 +185,7 @@ export class LlamadaFuncion extends Expresion {
                                         let tipoData=new Tipo(TipoPrimitivo.Integer);
                                         this.tipo=tipoData;
                                         return;
-                                    }else{
+                                    }else if(Number.isInteger(a)){
                                         let tipoData=new Tipo(TipoPrimitivo.Integer);
                                         this.tipo=tipoData;
                                         return a;
