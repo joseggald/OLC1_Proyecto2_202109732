@@ -1,13 +1,4 @@
 class NodeTableSymbols {
-    /**
-     *
-     * @param {*} line
-     * @param {*} column
-     * @param {*} name
-     * @param {*} type
-     * @param {*} typeEnviroment
-     * @param {*} value
-     */
     constructor(line, column, name, type, typeEnviroment, value) {
       this.line = line;
       this.column = column;
@@ -68,3 +59,4 @@ class NodeTableSymbols {
   
   }
   
+module.exports=TableReport;

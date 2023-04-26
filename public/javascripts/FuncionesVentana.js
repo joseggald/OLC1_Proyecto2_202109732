@@ -4,6 +4,7 @@
 +  Enviar  YABA (Alto Nivel) a Traducir
 +
 +++++++++++++++++++++++++*/
+
 function traducirEntrada(cadena,archivo,callback){
     //Enviar cadena del Cliente
     let respuesta = "";

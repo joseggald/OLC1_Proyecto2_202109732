@@ -236,6 +236,10 @@ DECLARACION : TIPO  id  '=' EXP
             {
                 $$ = new DeclararArreglo($1, $4,undefined, $7,undefined, @2.first_line, @2.first_column);
             }
+            | tlist '<' TIPO '>' id '=' tnew tlist '<' TIPO '>'
+            {
+                $$ = new DeclararLista($3, $5, $10, @2.first_line, @2.first_column);
+            }
 ;
 
 ASIGNACION  :    id '=' EXP ';'
@@ -390,7 +394,7 @@ EXP :   EXP '+' EXP                     { $$ = new OperacionAritmetica($1, $2, $
     |   EXP '*' EXP                     { $$ = new OperacionAritmetica($1, $2, $3, @2.first_line, @2.first_column);}
     |   EXP '/' EXP                     { $$ = new OperacionAritmetica($1, $2, $3, @2.first_line, @2.first_column);}
     |   EXP '^' EXP                     { $$ = new OperacionAritmetica($1, $2, $3, @2.first_line, @2.first_column);}
-    |   '-' EXP %prec negativo          { $$ = $2;}
+    |   '-' EXP %prec negativo          { $$ = new OperacionAritmetica($2, "negativo", $2, @2.first_line, @2.first_column);}
     |   '(' EXP ')'                     { $$ = $2;}
     |   EXP '=='  EXP                   { $$ = new OperacionRelacional($1, $2, $3, @2.first_line, @2.first_column);}
     |   EXP '!='  EXP                   { $$ = new OperacionRelacional($1, $2, $3, @2.first_line, @2.first_column);}

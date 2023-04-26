@@ -1,10 +1,12 @@
+const TableReport = require("../../src/AST/ClasesArbolAST/TableReport");
+
 function generateTree(treeData) {
     let size = getTreeLength(treeData[0]);
     //console.log("tama;o");
     //console.log(size);
     // ************** Generate the tree diagram	 *****************
     var margin = { top: 20, right: 00, bottom: 20, left: 0 },
-        width = 55 * size - margin.right - margin.left,
+        width = 65 * size - margin.right - margin.left,
         height = 60 * size - margin.top - margin.bottom;
 
     var i = 0,
@@ -24,7 +26,6 @@ function generateTree(treeData) {
         .attr("overflow","auto")// 
         .append("g") 
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
     root = treeData[0];
     root.x0 = width;
     root.y0 = height;
@@ -65,7 +66,7 @@ function generateTree(treeData) {
 
         nodeEnter.append("text")
             .attr("x", function(d) { return d.children || d._children ? 20 : -8; })
-            .attr("dy", "30px")
+            .attr("dy", "50px")
             .attr("text-anchor", function(d) { return d.children || d._children ? "end" : "start"; })
             .text(function(d) { return d.name; })
             .text(function(d) { return d.name; })
@@ -77,7 +78,7 @@ function generateTree(treeData) {
             .attr("transform", function(d) { return "translate(" + d.x + "," + d.y + ")"; });
 
         nodeUpdate.select("circle")
-            .attr("r", 10)
+            .attr("r", 15)
             .style("fill", function(d) { return d._children ? "lightsteelblue" : "#fff"; });
 
         nodeUpdate.select("text")
@@ -128,7 +129,6 @@ function generateTree(treeData) {
         });
     }
 
-    // Toggle children on click.
     function click(d) {
         if (d.children) {
             d._children = d.children;
@@ -142,20 +142,9 @@ function generateTree(treeData) {
 }
 
 function getTreeLength(tree) {
-    /*if(tree.children.length==='undefined'){
-        console.log(tree.children.name);
-    }*/
+
     let prod = " ";
-    //var hijos = chol
-    //console.log(children);
-    /*for (var i = 0; i < children.length; i++) {
-        var hijo =  children[i];            
-        console.log(hijo);
-        prod += hijo.name + " ";
-    }
-    /*TableReport.GramaticalList.push({
-                _prod: prod
-            });*/
+
     if (tree.children.length > 0) {
         let size = tree.children.length;
         for (let node of tree.children) {
@@ -169,3 +158,5 @@ function getTreeLength(tree) {
     }
     return 0;
 }
+
+module.exports={generateTree}

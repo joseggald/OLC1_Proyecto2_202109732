@@ -1,8 +1,14 @@
-body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+@import url('https://fonts.googleapis.com/css2?family=Roboto+Mono&display=swap');
+
+textarea {
+  font-family: 'Roboto Mono', monospace;
+  font-size: 14px;
 }
 
-a {
-  color: #00B7FF;
+body {
+  background-color: #0F192A;
+}
+
+h1, h2 {
+  color: white;
 }

@@ -1,46 +1,47 @@
+%{
+  const newNode = require('../Analizador/ArbolAST');
+}%
+
 
 %lex
-
+//AREA LEXICA
 %options case-sensitive
-lex_identificador   [A-Za-z_\ñ\Ñ][A-Za-z_0-9\ñ\Ñ]*
+identificador   [A-Za-z_\ñ\Ñ][A-Za-z_0-9\ñ\Ñ]*
 
 %%
-//--------------------Para comentarios y caracteres en blanco----------------------
-"//".*            	                          {} //Linea simple
-[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]           {} //Multilinea
+
+//Comentarios y espacios
+"//".*            	                          {} //Linea Sola
+[/][*][^*]*[*]+([^][^*]*[*]+)*[/]           {} //Multilinea
 [ \r\t]+                                      {}
 \n                                            {}
-//---------------------------------------------------------------------------------
 
-//--------------------Para valores primitivos--------------------------------------
+//Primitivos
 "null"			    	              return "nullVal";
 "true"			    	              return "trueVal";
 "false"			    	              return "falseVal";
-[0-9]+("."[0-9]+)+\b            return "doubleVal";
-[0-9]+\b                        return "intVal";
+[0-9]+("."[0-9]+)+\b            return "decimalVal";
+[0-9]+\b                        return "enteroVal";
 \"((\\\")|[^\n\"])*\"           { yytext = yytext.substr(1,yyleng-2); return 'stringVal'; }
 \'((\\\')|[^\n\'])*\'	        	{ yytext = yytext.substr(1,yyleng-2); return 'charVal'; }
-//---------------------------------------------------------------------------------
 
+// Llamados de Impresiones
 "print"			    		return "Rprint";
-"println"			      return "Rprintln";
-//-------------------------------------Simbolos--------------------------------
 
-"("                 return 'PAROP';
-")"                 return 'PARCLS';
+// Simbolos Generales
+"("                 return 'PARABRE';
+")"                 return 'PARCIERRA';
 ";"                 return 'PTOCOMA';
 ","                 return 'COMA';
 ":"                 return 'DOSPTOS';
-"["                 return 'COROP';
-"]"                 return 'CORCLS';
-"{"                 return 'KEYOP';
-"}"                 return 'KEYCLS';
+"["                 return 'CORABRE';
+"]"                 return 'CORCIERRA';
+"{"                 return 'LLAVEA';
+"}"                 return 'LLAVEC';
 "."                 return 'PTO';
 
-//-------------------------------Aritmetica----------------------------------
-"++"                return '++';
+// Simbolos Aritmeticos
 "+"                 return '+';
-"--"                return '--';
 "-"                 return '-';
 "*"                 return '*';
 "^"                 return '^';
@@ -49,22 +50,25 @@ lex_identificador   [A-Za-z_\ñ\Ñ][A-Za-z_0-9\ñ\Ñ]*
 "?"                 return '?';
 "#"                 return '#';
 
-//-------------------------------Relacionales-----------------------------------
+// Operadores Relacionales
 ">="                return '>=';
 ">"                 return '>';
 "<="                return '<=';
 "<"                 return '<';
-//------------------------------Comparacion-----------------------------------
+
+// Operadores de Comparacion
 "=="                return '==';
 "!="                return '!=';
 "="                 return '=';
-//------------------------------Logicas---------------------------------------
+
+// Operadores Logicos
 "&&"                return '&&';
 "&"                 return '&';
 "||"                return '||';
 "!"                 return '!';
 
-//-----------------------------Reservadas-------------------------------------
+// PALABRAS RESERVADAS
+// Tipos de datos
 "String"            return 'STRING';
 "double"            return 'DOUBLE';
 "int"               return 'INT';
@@ -72,13 +76,13 @@ lex_identificador   [A-Za-z_\ñ\Ñ][A-Za-z_0-9\ñ\Ñ]*
 "boolean"           return 'BOOLEAN';
 "char"              return 'CHAR';
 
+// Ciclos y Funciones de Programa
 "if"                return 'IF';
 "for"               return 'FOR';
 "in"                return 'IN';
 "while"             return 'WHILE';
 "do"                return 'DO';
 "print"             return 'Rprint';
-"println"           return 'Rprintln';
 "else"              return 'ELSE';
 "switch"            return 'SWITCH';
 "case"              return 'CASE';
@@ -87,38 +91,37 @@ lex_identificador   [A-Za-z_\ñ\Ñ][A-Za-z_0-9\ñ\Ñ]*
 "return"            return 'RETURN';
 "continue"          return 'CONTINUE';
 
+//Funciones
 "toUppercase"       return 'TOUPPER';
 "toLowercase"       return 'TOLOWER';
-"subString"         return 'SUBSTR';
 "length"            return 'LENGTH';
-"caracterOfPosition" return 'CARACTERPOSC';
-"push"              return 'PUSH';
-"pop"               return 'POP';
-"struct"            return 'STRUCT'
-"parse"             return 'PARSE';
+"toCharArray"            return 'CHARARRAY'
+"Typeof"             return 'TYPEOF';
+"truncate"             return 'TRUNCATE';
+"round"             return 'ROUND';
 
-{lex_identificador} return 'ID'
+{identificador} return 'ID'
 
 <<EOF>>             return 'EOF';
 /* ERROR */
-. { ErrorList.addError(new ErrorNode(yylloc.first_line,yylloc.first_column,new ErrorType(EnumErrorType.LEXICO),`El caracter: "${yytext}" no pertenece al lenguaje`,ENVIRONMENT.NULL)); }
+. { console.log("Error")}
 
-/*.                       { console.error('Este es un error léxico: ' + yytext + ', en la linea: ' + yylloc.first_line + ', en la columna: ' + yylloc.first_column); }*/
-/lex
+ 
+//lex
 
-/* Asociación de operadores y precedencia */
-%left '||'
+// Precedencia de Operaciones
+%right UMENOS 
+%left '^'
+%left '*' '/'
+%left '+' '-'
+%left '==' '!=' '<' '<=' '>' '>='
 %left '&&'
+%left '||'
 %left '?'
 %left '&'
-%right '!'
-%left '==' '!=' '<' '<=' '>' '>='
-%left '+' '-'
-%left '*' '/' '%'
+%left '%'
 %right '++' '--'
-%left '^'
-%right UMENOS
-%left 'PAROP' 'PARCLS'
+%left 'PARABRE' 'PARCIERRA'
 
 %left 'EOF'
 
@@ -126,8 +129,8 @@ lex_identificador   [A-Za-z_\ñ\Ñ][A-Za-z_0-9\ñ\Ñ]*
 
 %ebnf
 
-%% /* Definición de la gramática */
-
+%% 
+// Gramatica
 INIT: SENTENCES EOF             { $$ = { val: 0, node: newNode(yy, yystate, $1.node,'EOF')}; return $$;}
     | EOF                       { $$ = { val: 0, node: newNode(yy, yystate,'EOF')}; return $$;}
 ;
@@ -138,71 +141,14 @@ SENTENCES
 ;
 
 SENTENCE
-  : FUNCT                       { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | PRINT                       { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | DECLARATION PTOCOMA         { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | CHANGE_VALUE_STRUCT         { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | ASSIGNMENT PTOCOMA          { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | SENTENCE_IF                 { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | SENTENCE_WHILE              { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | SENTENCE_DO_WHILE           { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | SENTENCE_SWITCH             { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | SENTENCE_FOR                { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | RETUR                       { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | BREAKS                      { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | CONTINU                     { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | CALL_FUNCTION PTOCOMA       { $$ = { val: 0, node: newNode(yy, yystate, $1.node, $2)}; }
-  | POST_FIXED PTOCOMA          { $$ = { val: 0, node: newNode(yy, yystate, $1.node, $2)}; }
-  | TEMPLATE_STRUCT             { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | CREATE_STRUCT               { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | METHODS PTOCOMA             { $$ = { val: 0, node: newNode(yy, yystate, $1.node,$2)}; }
+  : PRINT                       { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
   | error PTOCOMA               { $$ = { val: 0, node: newNode(yy, yystate,'ERROR')}; }
   | error KEYCLS                { $$ = { val: 0, node: newNode(yy, yystate,'ERROR')}; }
 ;
 
-CHANGE_VALUE_STRUCT
-  : ID PTO ACCESS '=' EXP PTOCOMA       { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node,$4,$5.node,$6)}; }
-;
-
-CREATE_STRUCT
-  : ID ID '=' ID PAROP L_E PARCLS PTOCOMA             { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3,$4,$5, $6.node ,$7,$8)}; }
-  | ID ID '=' STRUCT_CASES PTOCOMA                    { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3,$4.node,$5)}; }
-;
-
-STRUCT_CASES
-  : ID PAROP PARCLS                           { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3)}; }
-  | ID PTO ACCESS                             { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node)}; }
-  | ID                                        { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
-  | nullVal                                   { $$ = { val: 0, node: newNode(yy, yystate, 'NULL')};}
-;
-
-TEMPLATE_STRUCT
-  : STRUCT ID KEYOP PARAMETERS KEYCLS PTOCOMA  { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3,$4.node,$5,$6)}; }
-;
-
 PRINT
-  : Rprint PAROP EXP PARCLS PTOCOMA		    { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node,$4,$5)}; }
-  | Rprintln PAROP EXP PARCLS PTOCOMA		  { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node,$4,$5)}; }
+  : Rprint PARABRE EXP PARCIERRA PTOCOMA		    { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node,$4,$5)}; }
 ;
-
-DECLARATION
-  : TIPO IDENTIFIERS                    { $$ = { val: 0, node: newNode(yy, yystate, $1.node, $2.node)}; }
-  | TIPO ID '=' EXP                     { $$ = { val: 0, node: newNode(yy, yystate, $1.node, $2,$3,$4.node)}; }
-  | TIPO COROP CORCLS ID '=' EXP        { $$ = { val: 0, node: newNode(yy, yystate, $1.node, $2,$3,$4,$5,$6.node)}; }
-  | TIPO COROP CORCLS IDENTIFIERS       { $$ = { val: 0, node: newNode(yy, yystate, $1.node, $2,$3,$4.node)}; }
-  | ID COROP CORCLS ID '=' EXP          { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3,$4,$5,$6.node)}; }
-  | ID COROP CORCLS IDENTIFIERS         { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3,$4.node)}; }
-;
-
-IDENTIFIERS
-  : IDENTIFIERS COMA ID                 { $$ = { val: 0, node: newNode(yy, yystate, $1.node,$2,$3)}; }
-  | ID                                  { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
-;
-
-ASSIGNMENT
-  : ID '=' EXP                                { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node)}; }
-  | ID ACCESS_ARRAY '=' EXP                   { $$ = { val: 0, node: newNode(yy, yystate, $1,$2.node,$3,$4.node)}; }
- ;
 
 EXP
   : EXP '&'  EXP                              { $$ = { val: 0, node: newNode(yy, yystate, $1.node, $2,$3.node)}; }
@@ -222,62 +168,7 @@ EXP
   | EXP '==' EXP                              { $$ = { val: 0, node: newNode(yy, yystate, $1.node, $2,$3.node)}; }
   | EXP '>=' EXP                              { $$ = { val: 0, node: newNode(yy, yystate, $1.node, $2,$3.node)}; }
   | EXP '<=' EXP                              { $$ = { val: 0, node: newNode(yy, yystate, $1.node, $2,$3.node)}; }
-  | CALL_FUNCTION                             { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
   | PRIMITIVO                                 { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | PAROP EXP PARCLS                          { $$ = { val: 0, node: newNode(yy, yystate, $1, $2.node,$3)}; }
-  | ID COROP EXP DOSPTOS EXP CORCLS           { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node,$4,$5.node,$6)}; }
-  | COROP L_E CORCLS                          { $$ = { val: 0, node: newNode(yy, yystate, $1, $2.node,$3)}; }
-  | COROP CORCLS                              { $$ = { val: 0, node: newNode(yy, yystate, $1,$2)};}
-  | ID ACCESS_ARRAY                           { $$ = { val: 0, node: newNode(yy, yystate, $1, $2.node)}; }
-  | ID                                        { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
-  | '#' ID                                    { $$ = { val: 0, node: newNode(yy, yystate, $1,$2)};}
-  | ARRAY_DOT                                 { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | POST_FIXED                                { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | TERNARY                                   { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | ID PTO ACCESS                             { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node)}; }
-  | METHODS                                   { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-;
-
-ARRAY_DOT
-  : ID '#'                                    { $$ = { val: 0, node: newNode(yy, yystate, $1,$2)}; }
-  | ID ACCESS_ARRAY '#'                       { $$ = { val: 0, node: newNode(yy, yystate, $1,$2.node,$3)}; }
-  | ID COROP EXP DOSPTOS EXP CORCLS '#'       { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node,$4,$5.node,$6,$7)}; }
-;
-
-ACCESS_ARRAY
-  : ACCESS_ARRAY COROP EXP CORCLS             { $$ = { val: 0, node: newNode(yy, yystate, $1.node,$2,$3.node,$4)}; }
-  | COROP EXP CORCLS                          { $$ = { val: 0, node: newNode(yy, yystate, $1,$2.node,$3)}; }
-;
-
-ACCESS
-  : ID PTO ACCESS                           { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node)}; }
-  | ID                                      { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
-;
-
-METHODS
-  : TIPO PTO METHOD PAROP L_E PARCLS           { $$ = { val: 0, node: newNode(yy, yystate, $1.node, $2,$3.node,$4,$5.node,$6)}; }
-  | ID PTO METHOD PAROP L_E PARCLS             { $$ = { val: 0, node: newNode(yy, yystate, $1, $2,$3.node,$4,$5.node,$6)}; }
-  | ID PTO METHOD PAROP PARCLS                 { $$ = { val: 0, node: newNode(yy, yystate, $1, $2,$3.node,$4,$5)}; }
-;
-
-METHOD
-  : TOUPPER             { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
-  | TOLOWER             { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
-  | SUBSTR              { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
-  | LENGTH              { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
-  | CARACTERPOSC        { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
-  | PARSE               { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
-  | PUSH                { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
-  | POP                 { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
-;
-
-TERNARY
-  : EXP '?' EXP DOSPTOS EXP     { $$ = { val: 0, node: newNode(yy, yystate, $1.node, $2,$3.node,$4,$5.node)};}
-;
-
-L_E
-  : L_E COMA EXP                { $$ = { val: 0, node: newNode(yy, yystate, $1.node,$2,$3.node)}; }
-  | EXP                         { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
 ;
 
 PRIMITIVO
@@ -288,142 +179,4 @@ PRIMITIVO
   | stringVal       { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
   | trueVal         { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
   | falseVal        { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
-;
-
-TIPO
-  : INT                                       { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
-  | DOUBLE                                    { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
-  | BOOLEAN                                   { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
-  | STRING                                    { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
-  | CHAR                                      { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
-  | VOID                                      { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
-;
-
-SENTENCE_FOR
-  : FOR PAROP DECLARATION PTOCOMA EXP PTOCOMA POST_FIXED PARCLS BLOCK      { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node,$4,$5.node,$6,$7.node,$8,$9.node)}; }
-  | FOR PAROP ASSIGNMENT PTOCOMA EXP PTOCOMA POST_FIXED PARCLS BLOCK       { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node,$4,$5.node,$6,$7.node,$8,$9.node)}; }
-  | FOR PAROP ID PTOCOMA EXP PTOCOMA POST_FIXED PARCLS BLOCK               { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3,$4,$5.node,$6,$7.node,$8,$9.node)}; }
-  | FOR ID IN EXP BLOCK                                                    { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3,$4.node,$5.node)};}
-;
-
-BLOCK
-  : KEYOP SENTENCES KEYCLS  { $$ = { val: 0, node: newNode(yy, yystate,$1,$2.node,$3)}; }
-  | KEYOP KEYCLS            { $$ = { val: 0, node: newNode(yy, yystate, $1,$2)}; }
-;
-
-POST_FIXED
-  : ID '--'   { $$ = { val: 0, node: newNode(yy, yystate, $1,$2)}; }
-  | ID '++'   { $$ = { val: 0, node: newNode(yy, yystate, $1,$2)}; }
-;
-
-CUERPO
-  : FUNCT                       { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | PRINT                       { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | DECLARATION PTOCOMA         { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | CHANGE_VALUE_STRUCT         { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | ASSIGNMENT PTOCOMA          { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | SENTENCE_WHILE              { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | SENTENCE_DO_WHILE           { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | SENTENCE_SWITCH             { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | SENTENCE_FOR                { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | RETUR                       { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | BREAKS                      { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | CONTINU                     { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | CALL_FUNCTION PTOCOMA       { $$ = { val: 0, node: newNode(yy, yystate, $1.node, $2)}; }
-  | POST_FIXED PTOCOMA          { $$ = { val: 0, node: newNode(yy, yystate, $1.node, $2)}; }
-  | TEMPLATE_STRUCT             { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | CREATE_STRUCT               { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-  | METHODS PTOCOMA             { $$ = { val: 0, node: newNode(yy, yystate, $1.node,$2)}; }
-  | error PTOCOMA               { $$ = { val: 0, node: newNode(yy, yystate,'ERROR')}; }
-  | error KEYCLS                { $$ = { val: 0, node: newNode(yy, yystate,'ERROR')}; }
-;
-
-BLOCK_IF
-  : KEYOP SENTENCES KEYCLS  { $$ = { val: 0, node: newNode(yy, yystate,$1, $2.node,$3)}; }
-  | KEYOP KEYCLS            { $$ = { val: 0, node: newNode(yy, yystate,$1, $2)}; }
-  | CUERPO                  { $$ = { val: 0, node: newNode(yy, yystate,$1.node)}; }
-;
-
-SENTENCE_IF
-  : IF PAROP EXP PARCLS BLOCK_IF ELSE_IF  { $$ = { val: 0, node: newNode(yy, yystate,$1,$2,$3.node,$4,$5.node,$6.node)}; }
-;
-
-ELSE_IF
-  : ELSE IF PAROP EXP PARCLS BLOCK ELSE_IF  { $$ = { val: 0, node: newNode(yy, yystate,$1,$2,$3,$4.node,$5,$6.node,$7.node)}; }
-  | ELSE BLOCK_IF                           { $$ = { val: 0, node: newNode(yy, yystate,$1,$2.node)}; }
-  | /*epsilone*/                            { $$ = { val: 0, node: newNode(yy, yystate,'epsilon')}; }
-;
-
-SENTENCE_SWITCH
-  : SWITCH PAROP EXP PARCLS BLOCK_SWITCH { $$ = { val: 0, node: newNode(yy, yystate,$1,$2,$3.node,$4,$5.node)}; }
-;
-
-BLOCK_SWITCH
-  : KEYOP L_CASE KEYCLS         { $$ = { val: 0, node: newNode(yy, yystate,$1,$2.node,$3)}; }
-  | KEYOP KEYCLS                { $$ = { val: 0, node: newNode(yy, yystate,$1,$2)}; }
-;
-
-L_CASE
-  : L_CASE CASES  { $$ = { val: 0, node: newNode(yy, yystate,$1.node,$2.node)};}
-  | CASES         { $$ = { val: 0, node: newNode(yy, yystate,$1.node)};}
-;
-
-CASES
-  : CASE EXP BLOCK_CASES        { $$ = { val: 0, node: newNode(yy, yystate,$1,$2.node,$3.node)};}
-  | DEFAULT BLOCK_CASES         { $$ = { val: 0, node: newNode(yy, yystate,$1,$2.node)};}
-;
-
-BLOCK_CASES
-  : DOSPTOS SENTENCES       { $$ = { val: 0, node: newNode(yy, yystate,$1,$2.node)}; }
-  | DOSPTOS                 { $$ = { val: 0, node: newNode(yy, yystate,$1)}; }
-;
-
-SENTENCE_WHILE
-  : WHILE PAROP EXP PARCLS BLOCK            { $$ = { val: 0, node: newNode(yy, yystate,$1,$2,$3.node,$4,$5.node)}; }
-;
-
-SENTENCE_DO_WHILE
-  : DO BLOCK WHILE PAROP EXP PARCLS PTOCOMA { $$ = { val: 0, node: newNode(yy, yystate,$1,$2.node,$3,$4,$5.node,$6,$7)}; }
-;
-
-FUNCT
-  : TIPO ID PAROP PARCLS BLOCK                            { $$ = { val: 0, node: newNode(yy, yystate,$1.node,$2,$3,$4,$5.node)}; }
-  | TIPO ID PAROP PARAMETERS PARCLS BLOCK                 { $$ = { val: 0, node: newNode(yy, yystate,$1.node,$2,$3,$4.node,$5,$6.node)}; }
-  | TIPO COROP CORCLS ID PAROP PARAMETERS PARCLS BLOCK    { $$ = { val: 0, node: newNode(yy, yystate,$1.node,$2,$3,$4,$5,$6.node,$7,$8.node)}; }
-  | TIPO COROP CORCLS ID PAROP PARCLS BLOCK               { $$ = { val: 0, node: newNode(yy, yystate,$1.node,$2,$3,$4,$5,$6,$7.node)}; }
-  | ID ID PAROP PARCLS BLOCK                              { $$ = { val: 0, node: newNode(yy, yystate,$1,$2,$3,$4,$5.node)}; }
-  | ID ID PAROP PARAMETERS PARCLS BLOCK                   { $$ = { val: 0, node: newNode(yy, yystate,$1,$2,$3,$4.node,$5,$6.node)}; }
-;
-
-PARAMETERS
-  : PARAMETERS COMA PARAMETER   { $$ = { val: 0, node: newNode(yy, yystate,$1.node,$2,$3.node)}; }
-  | PARAMETER                   { $$ = { val: 0, node: newNode(yy, yystate,$1.node)}; }
-;
-
-PARAMETER
-  : TIPO ID                     { $$ = { val: 0, node: newNode(yy, yystate,$1.node,$2)}; }
-  | TIPO ID COROP CORCLS        { $$ = { val: 0, node: newNode(yy, yystate,$1.node,$2,$3,$4)}; }
-  | ID ID                       { $$ = { val: 0, node: newNode(yy, yystate,$1,$2)}; }
-;
-
-CALL_FUNCTION
-  : ID PAROP L_E PARCLS                         { $$ = { val: 0, node: newNode(yy, yystate,$1,$2,$3.node,$4)}; }
-  | ID '#' PAROP L_E PARCLS                     { $$ = { val: 0, node: newNode(yy, yystate,$1,$2,$3,$4.node,$5)}; }
-  | ID PAROP PARCLS                             { $$ = { val: 0, node: newNode(yy, yystate,$1,$2,$3)}; }
-  | STRING PAROP L_E PARCLS                     { $$ = { val: 0, node: newNode(yy, yystate,$1,$2,$3.node,$4)}; }
-  | STRING '#' PAROP L_E PARCLS                 { $$ = { val: 0, node: newNode(yy, yystate,$1,$2,$3,$4.node,$5)}; }
-
-;
-
-BREAKS
-  : BREAK PTOCOMA       { $$ = { val: 0, node: newNode(yy, yystate,$1,$2)}; }
-;
-
-CONTINU
-  : CONTINUE PTOCOMA    { $$ = { val: 0, node: newNode(yy, yystate,$1,$2)}; }
-;
-
-RETUR
-  : RETURN PTOCOMA     { $$ = { val: 0, node: newNode(yy, yystate,$1,$2)}; }
-  | RETURN EXP PTOCOMA { $$ = { val: 0, node: newNode(yy, yystate,$1,$2.node,$3)}; }
 ;

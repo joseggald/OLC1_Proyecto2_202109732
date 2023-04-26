@@ -44,6 +44,21 @@ export class OperacionAritmetica extends Expresion {
                 {
                     return this.Potencia(val1, tipo1, val2, tipo2, actual, global, ast);
                 }
+        case "negativo":
+                {
+                    return this.Negativo(val1, tipo1, actual, global, ast);
+                }
+        }
+    }
+    public Negativo(val1: any, tipo1: Tipo, actual: Ambito, global: Ambito, ast: AST): any {
+        let prim1: TipoPrimitivo = tipo1.getPrimitivo();
+
+        if (prim1 == TipoPrimitivo.Integer) {
+            this.tipo = new Tipo(TipoPrimitivo.Integer);
+            return val1-(val1*2);
+        }else if (prim1 == TipoPrimitivo.Double) {
+            this.tipo = new Tipo(TipoPrimitivo.Double);
+            return val1-(val1*2);
         }
     }
 

@@ -7,3 +7,5 @@ class ErrorNode {
         this.environmentType = environmentType;
     }
 }
+
+module.exports=ErrorNode;

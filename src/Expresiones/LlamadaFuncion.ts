@@ -102,8 +102,6 @@ export class LlamadaFuncion extends Expresion {
                                 if (s!=undefined) {
                                     if(s=="return"){
                                         return;
-                                    }else{
-                                        throw new Error("ERROR => Las funciones void no pueden retornar valores");
                                     }
                                 }        
                             }
@@ -111,8 +109,6 @@ export class LlamadaFuncion extends Expresion {
                                 let a=sentencia.getValor(ambito, global, ast);  
                                 if(a=="return"){
                                     return;
-                                }else{
-                                    throw new Error("ERROR => Las funciones void no pueden retornar valores");
                                 }
                                
                             } 

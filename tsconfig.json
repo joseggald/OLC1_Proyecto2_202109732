@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "allowJs": true,
     "module": "commonjs",
     "esModuleInterop": true,
     "target": "ES2016",
@@ -7,5 +8,9 @@
     "sourceMap": true,
     "outDir": "dist"
   },
-  "lib": ["es2016"]
+  "lib": ["es2016"],
+  "include": [
+    "src/**/*"
+, "public/javascripts/ArbolAst.js"  ]
+  
 }

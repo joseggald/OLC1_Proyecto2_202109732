@@ -5,8 +5,12 @@ import bodyParser   from 'body-parser';
 import { Analizador } from './Analizador/Analizador';
 import { AST } from './Entorno/AST';
 
+import manejarDatos from './Analizador/ArbolAST';
+
 const app = express();
 const port = 3000;
+
+app.use(express.static('public'));
 
 // view engine setup
 app.set('views', path.join(__dirname, '../views'));
@@ -40,8 +44,9 @@ app.get('/', (req, res) => {
 });
 
 app.post('/ejecutar', (req, res) => {
-    let cadena_codigo = req.body.codigo;
+    let cadena_codigo = req.body.codigo; 
     let analizador = new Analizador(cadena_codigo, "editor");
+    manejarDatos(cadena_codigo);
     let ast: AST = analizador.Analizar();
     if(ast != undefined) {
         res.render('index.ejs', { title: 'InterpreteTS - JISON', salida: ast.getSalida(), codigo: cadena_codigo});
