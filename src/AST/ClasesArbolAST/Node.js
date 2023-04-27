@@ -5,5 +5,3 @@ class Node {
         this.translatedCode = "";
     }
 }
-
-module.exports=Node;

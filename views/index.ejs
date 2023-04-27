@@ -9,6 +9,9 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/stylesheets/style.css">
+    <link rel="stylesheet" href="/stylesheets/ArbolAst.css">
+    <link rel="stylesheet" href="/javascripts/ArbolAst.js">
+    <link rel="stylesheet" href="/javascripts/prueba.js">
     <!-- ================================= CODEMIRROR =========================== -->
     <link rel="stylesheet" href="/codemirror/lib/codemirror.css">
     <script src="/codemirror/lib/codemirror.js"></script>
@@ -21,6 +24,9 @@
      <!-- CODEMIRROR ADDONS -->
      <script src="/codemirror/addon/edit/closebrackets.js"></script>      
      <script src="/codemirror/addon/selection/active-line.js"></script>
+     <script type="module">
+        import * as d3 from './node_modules/d3/src/index.js';
+      </script>
 </head>
 <body>
 	<h1>TypeWise</h1>
@@ -30,7 +36,6 @@
     </div>
     <div class="row">
         <div class="col-6">
-            <button type="button" id="ola" class="btn-secondary" onclick=ola()>aaaa</button>
             <form method="POST" action="/ejecutar">
                 <button type="submit" class="btn btn-outline-success m-3" >Ejecutar</button>
                 <textarea  id="editor" name="codigo"><%= codigo %></textarea>
@@ -45,17 +50,9 @@
         </div>   
     </div>
     <div class="row justify-content-md-center">
-        <div class="col-12">
-          <div _ngcontent-pyl-c58="" id="graph-container" name="graph-container" style="text-align: center">
-                
-          </div>
-        </div>
+        <svg id="imagen"></svg>
     </div> 
     <script>
-        document.getElementById("ola").addEventListener("click", function(){
-            console.log("hola");
-        });
-        console.log("ola")
         let editor = CodeMirror.fromTextArea(document.getElementById("editor"),{
                     lineNumbers         : true,
                     mode                : "text/x-java",
@@ -65,8 +62,6 @@
                     styleActiveLine     : true
                 });
         editor.setSize("700","500");
-        
-
     </script>
 </body>
 </html>

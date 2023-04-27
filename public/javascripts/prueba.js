@@ -1,3 +1,6 @@
-function prueba() {
-    console.log("Imprime contenido en el log");
+function rsImg(){
+    if (document.getElementById("grafo")) {
+        document.getElementById("grafo").remove();
+    }
 }
+module.exports =rsImg

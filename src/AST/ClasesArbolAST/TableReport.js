@@ -53,10 +53,6 @@ class NodeTableSymbols {
             //PrintConsole.printLine(`Error tipo: ${item.errorType} Linea: ${item.line} Columna: ${item.column} Descripcion: ${item.description} Entorno: ${item.enviroment}`);
         }
     }
-
-  
-  
-  
-  }
+}
   
 module.exports=TableReport;
