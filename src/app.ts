@@ -8,7 +8,7 @@ import { AST } from './Entorno/AST';
 import manejarDatos from './Analizador/ArbolAST';
 
 const app = express();
-const port = 3000;
+const port = 4000;
 
 app.use(express.static('public'));
 

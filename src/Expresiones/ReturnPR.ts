@@ -1,8 +1,6 @@
 import { Expresion } from "../Entorno/Expresion";
 import { Ambito } from "../Entorno/Ambito";
 import { AST } from "../Entorno/AST";
-import { Tipo } from '../Entorno/Simbolos/Tipo';
-import { TipoPrimitivo } from "../Entorno/Simbolos/TipoPrimitivo";
 
 export class ReturnPR extends Expresion{
   exp: Expresion;

@@ -1,9 +1,19 @@
-const { generateTree } = require("../../public/javascripts/ArbolAst");
 const GramaticaAST = require("../AST/GramaticaAST");
 
+
 function manejarDatos(texto) {
-    console.log(texto);
+  console.log(texto)
+  /*
+  const raiz = GramaticaAST.parse(texto);
+  const contenido = `digraph G { 
+      graph [ratio=.548];
+      node [style=filled, color=black, shape=circle, width=1
+          fontname=Helvetica, fontweight=bold, fontcolor=black,
+          fontsize=10, fixedsize=true];
+  `+ raiz.graficar() + " \n }";
+  console.log(contenido)      */
 }
+
 /*
 function arbolast(content){
     console.log(content);
@@ -59,6 +69,5 @@ function getNonTerminal(yy, state) {
 }
 
 
-module.exports =newNode;
-*/
+module.exports =newNode;*/
 module.exports = manejarDatos;

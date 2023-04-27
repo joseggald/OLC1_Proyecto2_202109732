@@ -25,13 +25,6 @@ export class DeclararLista extends Instruccion {
     }
 
     public ejecutar(actual: Ambito, global: Ambito, ast: AST) {
-
-        // Verificar que no exista variable
-        console.log(actual.existeLista(this.id));
-        if (actual.existeLista(this.id)) {
-            // * ERROR *
-            throw new Error("Lista ya se encuentra definida en el entorno actual: " + this.linea + " , " + this.columna);
-        }
         
         if (this.ctipo.getPrimitivo() === this.tipo.getPrimitivo()) {
             let array: Expresion[] = [];

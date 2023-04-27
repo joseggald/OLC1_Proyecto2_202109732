@@ -30,6 +30,7 @@
     </div>
     <div class="row">
         <div class="col-6">
+            <button type="button" id="ola" class="btn-secondary" onclick=ola()>aaaa</button>
             <form method="POST" action="/ejecutar">
                 <button type="submit" class="btn btn-outline-success m-3" >Ejecutar</button>
                 <textarea  id="editor" name="codigo"><%= codigo %></textarea>
@@ -51,6 +52,10 @@
         </div>
     </div> 
     <script>
+        document.getElementById("ola").addEventListener("click", function(){
+            console.log("hola");
+        });
+        console.log("ola")
         let editor = CodeMirror.fromTextArea(document.getElementById("editor"),{
                     lineNumbers         : true,
                     mode                : "text/x-java",
@@ -60,6 +65,8 @@
                     styleActiveLine     : true
                 });
         editor.setSize("700","500");
+        
+
     </script>
 </body>
 </html>

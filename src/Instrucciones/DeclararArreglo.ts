@@ -25,13 +25,6 @@ export class DeclararArreglo extends Instruccion{
     }
 
     public ejecutar(actual: Ambito, global: Ambito, ast: AST) {
-        
-        // Verificar que no exista variable
-        console.log(actual.existeArreglo(this.id));
-        if( actual.existeArreglo(this.id) ) {
-            // * ERROR *
-            throw new Error("Arreglo ya se encuentra definida en el entorno actual: " + this.linea + " , " + this.columna);
-        }
         if(this.ctipo == undefined){
             if(this.tipo.getPrimitivo() === TipoPrimitivo.Integer){
                 let array: Expresion[] = [];

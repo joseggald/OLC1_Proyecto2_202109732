@@ -52,9 +52,9 @@ export class Ambito {
         let e: Ambito = this;
         while (e != null) {
             try {
-                const variable = e.tabla_arreglos.get(id);
-                if (variable != null) {
-                    return variable as Arreglo;
+                const array = e.tabla_arreglos.get(id);
+                if (array != null) {
+                    return array as Arreglo;
                 }
             } catch (error) {
                 console.log(error);
@@ -68,9 +68,9 @@ export class Ambito {
         let e: Ambito = this;
         while (e != null) {
             try {
-                const variable = e.tabla_listas.get(id);
-                if (variable != null) {
-                    return variable as Lista;
+                const lista = e.tabla_listas.get(id);
+                if (lista != null) {
+                    return lista as Lista;
                 }
             } catch (error) {
                 console.log(error);

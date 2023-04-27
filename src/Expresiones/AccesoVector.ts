@@ -14,9 +14,8 @@ export class AccesoVector extends Expresion{
     }
 
     public getValor(actual: Ambito, global: Ambito, ast: AST) {
-
         let vector = actual.getVector(this.nombre);
-        let valor_var =vector.getObjetoId(this.pos.getValor(actual,global,ast));
+        let valor_var = vector.getObjetoId(this.pos.getValor(global,global,ast));
         this.tipo = vector.getTipo();
         return valor_var;
     }

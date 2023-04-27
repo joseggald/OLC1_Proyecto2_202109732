@@ -21,13 +21,19 @@ export class DoWhile extends Instruccion {
         let val_cond = this.exp.getValor(actual, global, ast);
         let ambito_local = new Ambito(actual);
         let a;
+        let s;
         do {
             for (let sentencia of this.sentencias) {
                 if (sentencia instanceof Instruccion){
-                    let s=sentencia.ejecutar(ambito_local, global, ast);
+                    s=sentencia.ejecutar(ambito_local, global, ast);
                     if (s!=undefined) {
                         if(s=="return"){
                             return "return";
+                        }else if(s=="break"){
+                            return;
+                        }else if(s=="continue"){
+                            console.log("continue while")
+                            continue;
                         }else{
                             return s;
                         }
@@ -43,8 +49,13 @@ export class DoWhile extends Instruccion {
                         }
                     }            
                 }
+                
+            }
+            if(s=="continue"){
+                continue;
             }
             val_cond = this.exp.getValor(actual, global, ast);
+   
         } while (val_cond);
     }
 }

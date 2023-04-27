@@ -2,7 +2,6 @@
   const newNode = require('../Analizador/ArbolAST');
 }%
 
-
 %lex
 //AREA LEXICA
 %options case-sensitive
@@ -11,8 +10,9 @@ identificador   [A-Za-z_\ñ\Ñ][A-Za-z_0-9\ñ\Ñ]*
 %%
 
 //Comentarios y espacios
-"//".*            	                          {} //Linea Sola
-[/][*][^*]*[*]+([^][^*]*[*]+)*[/]           {} //Multilinea
+/* COMENTARIOS */
+'//'.*                                 {/* IGNORE */}
+[/][*][^*]*[*]+([^/*][^*]*[*]+)*[/]    {/* IGNORE */}
 [ \r\t]+                                      {}
 \n                                            {}
 
@@ -106,8 +106,8 @@ identificador   [A-Za-z_\ñ\Ñ][A-Za-z_0-9\ñ\Ñ]*
 /* ERROR */
 . { console.log("Error")}
 
- 
-//lex
+/*.                       { console.error('Este es un error léxico: ' + yytext + ', en la linea: ' + yylloc.first_line + ', en la columna: ' + yylloc.first_column); }*/
+/lex
 
 // Precedencia de Operaciones
 %right UMENOS 

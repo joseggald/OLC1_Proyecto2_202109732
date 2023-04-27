@@ -2,9 +2,11 @@ import { Ambito } from "../Entorno/Ambito";
 import { AST } from "../Entorno/AST";
 import { Expresion } from "../Entorno/Expresion";
 import { Instruccion } from "../Entorno/Instruccion";
+import { Arreglo } from "../Entorno/Simbolos/Arreglo";
 import { Tipo } from "../Entorno/Simbolos/Tipo";
 import { TipoPrimitivo } from "../Entorno/Simbolos/TipoPrimitivo";
 import { Variable } from "../Entorno/Simbolos/Variable";
+import { AccesoVector } from "../Expresiones/AccesoVector";
 
 export class DeclararVariable extends Instruccion{
     
@@ -24,13 +26,15 @@ export class DeclararVariable extends Instruccion{
         
         // Verificar que no exista variable
         let res
+        let a;
+
         if(this.exp != undefined) {
-                res = this.exp.getValor(actual, global, ast);
-                if(this.tipo.getPrimitivo() != this.exp.tipo.getPrimitivo()) {
-                    // * ERROR *
-                    throw new Error("Tipo de variable declarada no es igual al tipo de la expresion: " + this.linea + " , " + this.columna);
-                }
-        } else{
+            res = this.exp.getValor(actual, global, ast);
+            if(this.tipo.getPrimitivo() != this.exp.tipo.getPrimitivo()) {
+                // * ERROR *
+                throw new Error("Tipo de variable declarada no es igual al tipo de la expresion: " + this.linea + " , " + this.columna);
+            }
+        }else{
             if(this.tipo.getPrimitivo() === TipoPrimitivo.Integer){
                 res = 0;
             }else if(this.tipo.getPrimitivo() === TipoPrimitivo.Double){
@@ -38,7 +42,9 @@ export class DeclararVariable extends Instruccion{
             } else if(this.tipo.getPrimitivo() === TipoPrimitivo.String) {
                 res = "";
             } else if(this.tipo.getPrimitivo() === TipoPrimitivo.Char) {
-                res = "";
+                res = '';
+            } else if(this.tipo.getPrimitivo() === TipoPrimitivo.Boolean) {
+                res = true;
             }
         }
         let nueva_var = new Variable(this.tipo, this.id, res);

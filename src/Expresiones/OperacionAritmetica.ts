@@ -50,6 +50,7 @@ export class OperacionAritmetica extends Expresion {
                 }
         }
     }
+    
     public Negativo(val1: any, tipo1: Tipo, actual: Ambito, global: Ambito, ast: AST): any {
         let prim1: TipoPrimitivo = tipo1.getPrimitivo();
 

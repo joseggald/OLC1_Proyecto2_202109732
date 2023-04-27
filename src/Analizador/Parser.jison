@@ -20,6 +20,8 @@
     let OperacionRelacional         =   require("../Expresiones/OperacionRelacional").OperacionRelacional;
     let While                       =   require("../Instrucciones/While").While;
     let ReturnPR                    =   require("../Expresiones/ReturnPR").ReturnPR;
+    let Break                    =   require("../Expresiones/Break").Break;
+    let Continue                    =   require("../Expresiones/Continue").Continue;
     let Valor                       =   require("../Expresiones/Valor").Valor;
     let Incremento                  =   require("../Instrucciones/Incremento").Incremento;
     let Decremento                  =    require("../Instrucciones/Decremento").Decremento;
@@ -77,7 +79,8 @@ frac                        (?:\.[0-9]+)
 "toUpper"                      {   return 'ttoUpper';     }
 "main"                          {   return 'tmain';     }
 "print"                           {   return 'tPrint';    }
-
+"break"                           {   return 'tBreak';    }
+"continue"                           {   return 'tContinue';    }
 
 /* =================== EXPRESIONES REGULARES ===================== */
 ([a-zA-ZÑñ]|("_"[a-zA-ZÑñ]))([a-zA-ZÑñ]|[0-9]|"_")*             yytext = yytext.toLowerCase();          return 'id';
@@ -196,6 +199,8 @@ SENTENCIA :     DECLARACION ';'             { $$ = $1; }
             |   PRINT       ';'             { $$ = $1; }
             |   MAIN ';'                    { $$ = $1; }
             |   RETURN                    { $$ = $1; }
+            |   BREAK                    { $$ = $1; }
+            |   CONTINUE                    { $$ = $1; }
 ;
 
 MAIN : tmain LLAMADA_FUNCION    { $$ = $1; }
@@ -206,6 +211,12 @@ PRINT : tPrint '(' LISTA_EXP ')' { $$ = new LlamadaPrint($1, $3, @1.first_line, 
 
 RETURN  :   treturn ';'                     { $$ = new ReturnPR(undefined,@2.first_line, @2.first_column); }
         |   treturn EXP ';'                 {  $$ = new ReturnPR($2,@2.first_line, @2.first_column);}
+;
+
+BREAK  :   tBreak ';'                     { $$ = new Break(@2.first_line, @2.first_column); }
+;
+
+RETURN  :   tContinue ';'                     { $$ = new Continue(@2.first_line, @2.first_column); }
 ;
 
 INCREMENTO : id '++'
@@ -406,6 +417,7 @@ EXP :   EXP '+' EXP                     { $$ = new OperacionAritmetica($1, $2, $
     |   EXP '||'  EXP                   { $$ = new OperacionLogica($1, $2, $3, @2.first_line, @2.first_column);}
     |   id                              { $$ = new AccesoVariable($1, @1.first_line, @1.first_column);        }
     |   id '[' EXP ']'                  { $$ = new AccesoVector($1, $3,@1.first_line, @1.first_column);        }
+    |   id  '[' '[' EXP ']' ']'         { $$ = new AccesoLista($1, $4, @1.first_line, @1.first_column);}
     |   LLAMADA_FUNCION                 { $$ = $1;}
     |   entero                          { $$ = new Valor($1, "integer", @1.first_line, @1.first_column);}
     |   decimal                         { $$ = new Valor($1, "double", @1.first_line, @1.first_column); }
