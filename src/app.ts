@@ -5,7 +5,7 @@ import bodyParser   from 'body-parser';
 import { Analizador } from './Analizador/Analizador';
 import { AST } from './Entorno/AST';
 
-import manejarDatos from './Analizador/ArbolAST';
+import {manejarDatos} from './Analizador/ArbolAST';
 
 const app = express();
 const port = 4000;
@@ -46,13 +46,14 @@ app.get('/', (req, res) => {
 app.post('/ejecutar', (req, res) => {
     let cadena_codigo = req.body.codigo; 
     let analizador = new Analizador(cadena_codigo, "editor");
-    manejarDatos(cadena_codigo);
+    
     let ast: AST = analizador.Analizar();
     if(ast != undefined) {
         res.render('index.ejs', { title: 'InterpreteTS - JISON', salida: ast.getSalida(), codigo: cadena_codigo});
     } else{
         res.render('index.ejs', { title: 'InterpreteTS - JISON', salida: 'ERROR al procesar cadena', codigo: cadena_codigo});
     }
+    manejarDatos(cadena_codigo);
 });
 
 

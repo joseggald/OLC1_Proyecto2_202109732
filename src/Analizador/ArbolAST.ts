@@ -1,9 +1,14 @@
-const GramaticaAST = require("../AST/GramaticaAST");
+/*import { generateTree } from '../../public/javascripts/ArbolAst';*/
+/*const GramaticaAST = require("../AST/GramaticaAST");
 const grammar = require("../A/grammar");
-const { generateTree } = require("../../public/javascripts/ArbolAst");
 
-function manejarDatos(texto) {
-  arbolast(texto);
+ */
+const generateTree  = require("../../public/javascripts/ArbolAst");
+const grammar = require('../A/grammar');
+export function manejarDatos(texto) {
+  console.log(texto);
+  let result = grammar.parse(texto)
+  generateTree([result.node])
   /*
   const raiz = GramaticaAST.parse("graficar(2-4);");
   const contenido = `digraph G { 
@@ -12,16 +17,13 @@ function manejarDatos(texto) {
           fontname=Helvetica, fontweight=bold, fontcolor=black,
           fontsize=10, fixedsize=true];
   `+ raiz.graficar() + " \n }";
-  console.log(contenido)
-  */      
+  console.log(contenido)*/
+      
 }
-
-
+/*
 function arbolast(content){
     console.log(content);
-    treeData = [];
+    let treeData = [];
     var result = grammar.parse("print(3);")
     generateTree([result.node])
-}
-
-module.exports = manejarDatos;
+}*/

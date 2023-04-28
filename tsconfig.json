@@ -11,6 +11,6 @@
   "lib": ["es2016"],
   "include": [
     "src/**/*"
-, "public/javascripts/ArbolAst.js"  ]
+, "public/javascripts/ArbolAst.ts"  ]
   
 }

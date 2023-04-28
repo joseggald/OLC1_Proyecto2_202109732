@@ -171,7 +171,7 @@ export class LlamadaFuncion extends Expresion {
                                 if (s!=undefined) {
                                     if(s=="return"){
                                         return;
-                                    }else if(Number.isInteger(s)){
+                                    }else if(Number.isInteger(a)){
                                         let tipoData=new Tipo(TipoPrimitivo.Integer);
                                         this.tipo=tipoData;
                                         return s;
@@ -182,14 +182,310 @@ export class LlamadaFuncion extends Expresion {
                                 a=sentencia.getValor(ambito, global, ast);
                                 if(sentencia instanceof ReturnPR){
                                     if (a=="return"){
-                                        let tipoData=new Tipo(TipoPrimitivo.Integer);
-                                        this.tipo=tipoData;
                                         return;
                                     }else if(Number.isInteger(a)){
                                         let tipoData=new Tipo(TipoPrimitivo.Integer);
                                         this.tipo=tipoData;
                                         return a;
                                     } 
+                                } 
+                            }
+                        }
+                    }else{
+                        throw new Error("ERROR => Los parametro mandados no encajan con la dimension de la funcion");
+                    }
+                }    
+            }
+            if(actual_func.tipo.getPrimitivo()==TipoPrimitivo.String){
+                if(actual_func.getCantParam()==0){
+                    let sentencias=actual_func.getSetencias();
+                    for(let sentencia of sentencias){ 
+                        if(sentencia instanceof Instruccion) {
+                            let s=sentencia.ejecutar(ambito, global, ast); 
+                                if (s!=undefined) {
+                                    if(s=="return"){
+                                        return;
+                                    }else if(typeof(a)=="string"){
+                                        let tipoData=new Tipo(TipoPrimitivo.String);
+                                        this.tipo=tipoData;
+                                        return s;
+                                    }
+                                } 
+                        }
+                        if(sentencia instanceof Expresion){
+                            a=sentencia.getValor(ambito, global, ast);
+                            if(sentencia instanceof ReturnPR){
+                                if (a=="return"){
+                                    return;
+                                }else if(typeof(a)=="string"){
+                                    let tipoData=new Tipo(TipoPrimitivo.String);
+                                    this.tipo=tipoData;
+                                    return a;
+                                } 
+                            }
+                        }    
+                    }            
+                }else{
+                    if(this.lista_exp.length==actual_func.idParam.length){
+                        for(let i=0; i<this.lista_exp.length; i++){
+                            actual_func.declaraciones[i].ejecutar(ambito,global,ast);
+                            let variable = ambito.getVariable(actual_func.idParam[i]);
+                            if(variable.getTipo().getPrimitivo()==TipoPrimitivo.String){
+                                if(typeof(this.lista_exp[i].getValor(actual,global,ast))=="string"){
+                                    variable.asignarValor(this.lista_exp[i].getValor(actual,global,ast))
+                                }else{
+                                    throw new Error("Los parametros mandados no son del mismo tipo."+this.columna+"  INT  "+this.linea);
+                                }
+                            }
+                        }    
+                        let sentencias=actual_func.getSetencias();
+                        for(let sentencia of sentencias){ 
+                            if(sentencia instanceof Instruccion) {
+                                let s=sentencia.ejecutar(ambito, global, ast); 
+                                if (s!=undefined) {
+                                    if(s=="return"){
+                                        return;
+                                    }else if(typeof(s)=="string"){
+                                        let tipoData=new Tipo(TipoPrimitivo.String);
+                                        this.tipo=tipoData;
+                                        return s;
+                                    } 
+                                } 
+                            }
+                            if(sentencia instanceof Expresion){
+                                a=sentencia.getValor(ambito, global, ast);
+                                if(sentencia instanceof ReturnPR){
+                                    if (a=="return"){
+                                        return;
+                                    }else if(typeof(a)=="string"){
+                                        let tipoData=new Tipo(TipoPrimitivo.String);
+                                        this.tipo=tipoData;
+                                        return a;
+                                    } 
+                                } 
+                            }
+                        }
+                    }else{
+                        throw new Error("ERROR => Los parametro mandados no encajan con la dimension de la funcion");
+                    }
+                }    
+            }
+            if(actual_func.tipo.getPrimitivo()==TipoPrimitivo.Double){
+                if(actual_func.getCantParam()==0){
+                    let sentencias=actual_func.getSetencias();
+                    for(let sentencia of sentencias){ 
+                        if(sentencia instanceof Instruccion) {
+                            let s=sentencia.ejecutar(ambito, global, ast); 
+                                if (s!=undefined) {
+                                    if(s=="return"){
+                                        return;
+                                    }else if(typeof s === "number" && Number.isFinite(s)){
+                                        let tipoData=new Tipo(TipoPrimitivo.Double);
+                                        this.tipo=tipoData;
+                                        return s;
+                                    }
+                                } 
+                        }
+                        if(sentencia instanceof Expresion){
+                            a=sentencia.getValor(ambito, global, ast);
+                            if(sentencia instanceof ReturnPR){
+                                if(a=="return"){
+                                    return;
+                                }else if(typeof a === "number" && Number.isFinite(a)){
+                                    let tipoData=new Tipo(TipoPrimitivo.Double);
+                                    this.tipo=tipoData;
+                                    return a;
+                                } 
+                            }
+                        }    
+                    }            
+                }else{
+                    if(this.lista_exp.length==actual_func.idParam.length){
+                        for(let i=0; i<this.lista_exp.length; i++){
+                            actual_func.declaraciones[i].ejecutar(ambito,global,ast);
+                            let variable = ambito.getVariable(actual_func.idParam[i]);
+                            if(variable.getTipo().getPrimitivo()==TipoPrimitivo.Double){
+                                if(typeof this.lista_exp[i].getValor(actual,global,ast) === "number"){
+                                    variable.asignarValor(this.lista_exp[i].getValor(actual,global,ast))
+                                }else{
+                                    throw new Error("Los parametros mandados no son del mismo tipo."+this.columna+"  INT  "+this.linea);
+                                }
+                            }
+                        }    
+                        let sentencias=actual_func.getSetencias();
+                        for(let sentencia of sentencias){ 
+                            if(sentencia instanceof Instruccion) {
+                                let s=sentencia.ejecutar(ambito, global, ast); 
+                                if (s!=undefined) {
+                                    if(s=="return"){
+                                        return;
+                                    }else if(typeof s === "number" && Number.isFinite(s)){
+                                        let tipoData=new Tipo(TipoPrimitivo.Double);
+                                        this.tipo=tipoData;
+                                        return s;
+                                    }
+                                } 
+                            }
+                            if(sentencia instanceof Expresion){
+                                a=sentencia.getValor(ambito, global, ast);
+                                if(sentencia instanceof ReturnPR){
+                                    if(a=="return"){
+                                        return;
+                                    }else if(typeof a === "number" && Number.isFinite(a)){
+                                        let tipoData=new Tipo(TipoPrimitivo.Double);
+                                        this.tipo=tipoData;
+                                        return a;
+                                    }
+                                } 
+                            }
+                        }
+                    }else{
+                        throw new Error("ERROR => Los parametro mandados no encajan con la dimension de la funcion");
+                    }
+                }    
+            }
+            if(actual_func.tipo.getPrimitivo()==TipoPrimitivo.Char){
+                if(actual_func.getCantParam()==0){
+                    let sentencias=actual_func.getSetencias();
+                    for(let sentencia of sentencias){ 
+                        if(sentencia instanceof Instruccion) {
+                            let s=sentencia.ejecutar(ambito, global, ast); 
+                                if (s!=undefined) {
+                                    if(s=="return"){
+                                        return;
+                                    }else if(typeof(s)=="string" &&  s.length === 1){
+                                        let tipoData=new Tipo(TipoPrimitivo.Char);
+                                        this.tipo=tipoData;
+                                        return s;
+                                    }
+                                } 
+                        }
+                        if(sentencia instanceof Expresion){
+                            a=sentencia.getValor(ambito, global, ast);
+                            if(sentencia instanceof ReturnPR){
+                                if (a=="return"){
+                                    return;
+                                }else if(typeof(a)=="string" &&  a.length === 1){
+                                    let tipoData=new Tipo(TipoPrimitivo.Char);
+                                    this.tipo=tipoData;
+                                    return a;
+                                } 
+                            }
+                        }    
+                    }            
+                }else{
+                    if(this.lista_exp.length==actual_func.idParam.length){
+                        let pr="";
+                        for(let i=0; i<this.lista_exp.length; i++){
+                            actual_func.declaraciones[i].ejecutar(ambito,global,ast);
+                            let variable = ambito.getVariable(actual_func.idParam[i]);
+                            if(variable.getTipo().getPrimitivo()==TipoPrimitivo.Char){
+                                pr=this.lista_exp[i].getValor(actual,global,ast)
+                                if(typeof(this.lista_exp[i].getValor(actual,global,ast))=="string" && pr.length==1){
+                                    variable.asignarValor(this.lista_exp[i].getValor(actual,global,ast))
+                                }else{
+                                    throw new Error("Los parametros mandados no son del mismo tipo."+this.columna+"  INT  "+this.linea);
+                                }
+                            }
+                        }    
+                        let sentencias=actual_func.getSetencias();
+                        for(let sentencia of sentencias){ 
+                            if(sentencia instanceof Instruccion) {
+                                let s=sentencia.ejecutar(ambito, global, ast); 
+                                if (s!=undefined) {
+                                    if(s=="return"){
+                                        return;
+                                    }else if(typeof(s)=="string" &&  s.length === 1){
+                                        let tipoData=new Tipo(TipoPrimitivo.Char);
+                                        this.tipo=tipoData;
+                                        return s;
+                                    }
+                                } 
+                            }
+                            if(sentencia instanceof Expresion){
+                                a=sentencia.getValor(ambito, global, ast);
+                                if(sentencia instanceof ReturnPR){
+                                    if (a=="return"){
+                                        return;
+                                    }else if(typeof(a)=="string" &&  a.length === 1){
+                                        let tipoData=new Tipo(TipoPrimitivo.Char);
+                                        this.tipo=tipoData;
+                                        return a;
+                                    } 
+                                } 
+                            }
+                        }
+                    }else{
+                        throw new Error("ERROR => Los parametro mandados no encajan con la dimension de la funcion");
+                    }
+                }    
+            }
+            if(actual_func.tipo.getPrimitivo()==TipoPrimitivo.Boolean){
+                if(actual_func.getCantParam()==0){
+                    let sentencias=actual_func.getSetencias();
+                    for(let sentencia of sentencias){ 
+                        if(sentencia instanceof Instruccion) {
+                            let s=sentencia.ejecutar(ambito, global, ast); 
+                                if (s!=undefined) {
+                                    if(s=="return"){
+                                        return;
+                                    }else if(typeof(s)=="boolean"){
+                                        let tipoData=new Tipo(TipoPrimitivo.Boolean);
+                                        this.tipo=tipoData;
+                                        return s;
+                                    }
+                                } 
+                        }
+                        if(sentencia instanceof Expresion){
+                            a=sentencia.getValor(ambito, global, ast);
+                            if(sentencia instanceof ReturnPR){
+                                if (a=="return"){
+                                    return;
+                                }else if(typeof(a)=="boolean"){
+                                    let tipoData=new Tipo(TipoPrimitivo.Boolean);
+                                    this.tipo=tipoData;
+                                    return a;
+                                }
+                            }
+                        }    
+                    }            
+                }else{
+                    if(this.lista_exp.length==actual_func.idParam.length){
+                        for(let i=0; i<this.lista_exp.length; i++){
+                            actual_func.declaraciones[i].ejecutar(ambito,global,ast);
+                            let variable = ambito.getVariable(actual_func.idParam[i]);
+                            if(variable.getTipo().getPrimitivo()==TipoPrimitivo.Boolean){
+                                if(typeof(this.lista_exp[i].getValor(actual,global,ast))=="boolean"){
+                                    variable.asignarValor(this.lista_exp[i].getValor(actual,global,ast))
+                                }else{
+                                    throw new Error("Los parametros mandados no son del mismo tipo."+this.columna+"  INT  "+this.linea);
+                                }
+                            }
+                        }    
+                        let sentencias=actual_func.getSetencias();
+                        for(let sentencia of sentencias){ 
+                            if(sentencia instanceof Instruccion) {
+                                let s=sentencia.ejecutar(ambito, global, ast); 
+                                if (s!=undefined) {
+                                    if(s=="return"){
+                                        return;
+                                    }else if(typeof(s)=="boolean"){
+                                        let tipoData=new Tipo(TipoPrimitivo.Boolean);
+                                        this.tipo=tipoData;
+                                        return s;
+                                    }
+                                } 
+                            }
+                            if(sentencia instanceof Expresion){
+                                a=sentencia.getValor(ambito, global, ast);
+                                if(sentencia instanceof ReturnPR){
+                                    if (a=="return"){
+                                        return;
+                                    }else if(typeof(a)=="boolean"){
+                                        let tipoData=new Tipo(TipoPrimitivo.Boolean);
+                                        this.tipo=tipoData;
+                                        return a;
+                                    }
                                 } 
                             }
                         }

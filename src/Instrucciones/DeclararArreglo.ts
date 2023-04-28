@@ -41,7 +41,7 @@ export class DeclararArreglo extends Instruccion{
             }else if(this.tipo.getPrimitivo() === TipoPrimitivo.Double){
                 let array: Expresion[] = [];
                 for(let i = 0; i<this.objetos.length; i++) {
-                    if(Number.isInteger(this.objetos[i].getValor(actual, global, ast)) && typeof this.objetos[i].getValor(actual, global, ast) === 'string'){
+                    if(typeof this.objetos[i].getValor(actual, global, ast) === "number" && Number.isFinite(this.objetos[i].getValor(actual, global, ast))){
                         throw new Error("Datos del arreglo no coinciden con el tipo de vecto definido" + this.linea + " , " + this.columna);
                     }else{
                         array[i]=this.objetos[i].getValor(actual, global, ast);
@@ -64,8 +64,10 @@ export class DeclararArreglo extends Instruccion{
                 actual.insertarArreglo(this.id,nuevo_arr);
             } else if(this.tipo.getPrimitivo() === TipoPrimitivo.Char) {
                 let array: Expresion[] = [];
+                let pr=""
                 for(let i = 0; i<this.objetos.length; i++) {
-                    if(typeof this.objetos[i].getValor(actual, global, ast) === 'string'){
+                    pr=this.objetos[i].getValor(actual, global, ast)
+                    if(typeof this.objetos[i].getValor(actual, global, ast) === 'string' &&  pr.length === 1 ){
                         array[i]=this.objetos[i].getValor(actual, global, ast);
                         console.log(array[i]);  
                     }else{

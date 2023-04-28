@@ -27,7 +27,7 @@ export class InsertarLista extends Instruccion {
             let valor = this.valor.getValor(actual, global, ast);
             let valorTipo = this.valor.tipo;
             let listaTipo = lista.getTipo().getPrimitivo()
-
+            
             if (valorTipo.getPrimitivo() != listaTipo) {
                 throw new Error(`ERROR => El tipo de la lista y el valor a ingresar no son los mismos en: ${this.id}`);
             }else{
