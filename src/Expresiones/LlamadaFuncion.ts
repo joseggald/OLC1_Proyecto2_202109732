@@ -172,7 +172,7 @@ export class LlamadaFuncion extends Expresion {
                                     if(s=="return"){
                                         return;
                                     }else if(Number.isInteger(a)){
-                                        let tipoData=new Tipo(TipoPrimitivo.Integer);
+                                        let tipoData=new Tipo(TipoPrimitivo.String);
                                         this.tipo=tipoData;
                                         return s;
                                     } 
