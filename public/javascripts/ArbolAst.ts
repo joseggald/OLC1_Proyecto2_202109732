@@ -1,6 +1,6 @@
 let counter = 0;
 let a;
-
+let data;
 
 function generateTree(treeData) {
   let dot = "digraph G {\n";

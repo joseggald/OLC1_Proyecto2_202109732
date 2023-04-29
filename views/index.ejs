@@ -9,13 +9,9 @@
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <link rel="stylesheet" href="/stylesheets/style.css">
-    <link rel="stylesheet" href="/stylesheets/ArbolAst.css">
-    <link rel="stylesheet" href="/javascripts/ArbolAst.js">
-    <link rel="stylesheet" href="/javascripts/prueba.js">
     <!-- ================================= CODEMIRROR =========================== -->
     <link rel="stylesheet" href="/codemirror/lib/codemirror.css">
     <script src="/codemirror/lib/codemirror.js"></script>
-    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>  
      <script src="/codemirror/lib/codemirror.js"></script>
      <script src="/codemirror/mode/clike/clike.js"></script>
      <link rel="stylesheet" href="/codemirror/lib/codemirror.css"/>
@@ -24,7 +20,6 @@
      <!-- CODEMIRROR ADDONS -->
      <script src="/codemirror/addon/edit/closebrackets.js"></script>      
      <script src="/codemirror/addon/selection/active-line.js"></script>
-     <script type="text/javascript" src="node_modules/d3/build/d3.js"></script>
 </head>
 <body>
 	<h1>TypeWise</h1>
@@ -35,8 +30,11 @@
     <div class="row">
         <div class="col-6">
             <form method="POST" action="/ejecutar">
-                <button type="submit" class="btn btn-outline-success m-3" >Ejecutar</button>
+                <button type="submit" class="btn btn-outline-success m-3">Ejecutar</button>
                 <textarea  id="editor" name="codigo"><%= codigo %></textarea>
+            </form>
+            <form method="POST" action="/arbol">
+                <button type="submit" class="btn btn-outline-success m-3">Arbol</button>
             </form>
         </div>
         <div class="col-6">     
@@ -47,9 +45,9 @@
             </div>
         </div>   
     </div>
-    <div class="row justify-content-md-center">
-        <svg id="imagen"></svg>
-    </div> 
+    <img id="img" src='<%= svgString %>''>
+          
+    </div>
     <script>
         let editor = CodeMirror.fromTextArea(document.getElementById("editor"),{
                     lineNumbers         : true,

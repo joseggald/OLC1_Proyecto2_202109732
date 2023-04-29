@@ -1,0 +1,126 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="./assets/css/consola.css">
+    <link rel="stylesheet" href="./Backend-JS/AST/ClasesArbolAST/ArbolAst.css ">
+    <script src="https://d3js.org/d3.v3.min.js" charset="utf-8"></script>
+    <title>TypeWise OLC1</title>
+
+    <!-- =================================== IMPORTACIONES =============================== -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <!-- ================================= ESTILOS BOOSTRAP =========================== -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <!-- ================================= CODEMIRROR =========================== -->
+    <link rel="stylesheet" href="./codemirror/lib/codemirror.css">
+    <script src="./codemirror/lib/codemirror.js"></script>
+    
+     <script src="./codemirror/lib/codemirror.js"></script>
+     <script src="./codemirror/mode/clike/clike.js"></script>
+     <link rel="stylesheet" href="./codemirror/lib/codemirror.css"/>
+     <script src="./codemirror/mode/javascript/javascript.js"></script>              <!-- MODO   -->
+     <link href="./codemirror/theme/midnight.css" rel="stylesheet" />       <!-- TEMA   -->
+     <!-- CODEMIRROR ADDONS -->
+     <script src="./codemirror/addon/edit/closebrackets.js"></script>      
+     <script src="./codemirror/addon/selection/active-line.js"></script>
+</head>
+<body>
+  
+    <div class="container">
+        <div class="row mb-3">
+          <div class="col-md-12">
+            <button id="btn-compile" class="btn btn-primary m-3">Generar arbol</button>
+          </div>
+        </div>
+        <div class="row">
+            <div class="col-md-1">
+              <pre id="line-numbers"></pre>
+            </div>
+            <div class="col-md-12">
+              <textarea id="input" class="form-control" rows="10" style="font-family: Consolas, monospace;">
+              </textarea>
+            </div>   
+          </div>          
+      </div>
+      <div class="row justify-content-md-center">
+        <div class="col-md-12">
+          <div _ngcontent-pyl-c58="" id="graph-container" name="graph-container" style="text-align: center">
+                
+          </div>
+        </div>
+        
+      </div> 
+      
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+  <script src="./assets/js/funcionesHtml.js"></script>
+  <script src="./Backend-JS/AST/ClasesArbolAST/ArbolAst.js"></script>
+  <script src="./Backend-JS/AST/ClasesArbolAST/ErrorNode.js"></script>
+  <script src="./Backend-JS/AST/ClasesArbolAST/TableReport.js"></script>
+  <script src="./Backend-JS/AST/GramaticaAST.js"></script>
+  <script>
+   
+    Fuente=document.getElementById('input');
+    document.getElementById('btn-compile').onclick = function(){
+      var Codigo = Fuente.value;
+      arbolast(Codigo);
+    }
+
+    function arbolast(content){
+      treeData = [];
+      if (document.getElementById("grafo")) {
+        document.getElementById("grafo").remove();
+      }
+      var result = GramaticaAST.parse(content);
+      generateTree([result.node]);
+    }
+
+    function newNode(yy, state, ...nodes) {
+      const parent = getNonTerminal(yy, state);
+      const children = [];
+            
+      for (let node of nodes) {
+        node.parent = node.parent ? node.parent : parent;
+        if (node.parent == parent) {
+          children.push(node);
+        } else if (typeof node == 'string') {
+          children.push({
+            name: node,
+            parent,
+            children: []
+          });
+        } else {
+          children.push({
+            name: node.parent,
+            parent,
+            children: [node]
+          });
+        }
+      }               
+
+      return {
+        name: parent,
+        parent: null,
+        children
+      }
+    }
+
+    function getNonTerminal(yy, state) {
+      const simbolos = yy.parser.symbols_;
+      const produccion = yy.parser.productions_[state];
+      let nonTerminal = '';
+      for (let sim in simbolos) {
+        if (simbolos[sim] === produccion[0]) {
+          nonTerminal = sim;
+           break;
+        }
+      }
+      return nonTerminal;
+    }
+  </script>
+</body>
+</html>

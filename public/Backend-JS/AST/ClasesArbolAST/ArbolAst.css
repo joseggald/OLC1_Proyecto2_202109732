@@ -1,0 +1,18 @@
+@import url("https://fonts.googleapis.com/css2?family=Chivo+Mono:wght@500&display=swap");
+
+.node circle {
+    fill: #ffffff;
+    stroke: rgb(177, 179, 180);
+    stroke-width: 3px;
+}
+
+.node text {
+    font: 15px Chivo Mono;
+    color: #ffffff;
+}
+
+.link {
+    fill: none;
+    stroke: #ccc;
+    stroke-width: 3px;
+}

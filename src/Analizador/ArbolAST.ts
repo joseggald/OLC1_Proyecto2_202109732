@@ -8,7 +8,7 @@ const grammar = require('../A/grammar');
 export function manejarDatos(texto) {
   console.log(texto);
   let result = grammar.parse(texto)
-  generateTree([result.node])
+  return generateTree([result.node])
   /*
   const raiz = GramaticaAST.parse("graficar(2-4);");
   const contenido = `digraph G { 

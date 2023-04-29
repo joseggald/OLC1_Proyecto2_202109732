@@ -6,9 +6,11 @@ import { Analizador } from './Analizador/Analizador';
 import { AST } from './Entorno/AST';
 
 import {manejarDatos} from './Analizador/ArbolAST';
-
+import { convertToFormat } from './Analizador/Conversor';
+const axios = require('axios');
 const app = express();
-const port = 4000;
+const port = 3000;
+
 
 app.use(express.static('public'));
 
@@ -40,20 +42,24 @@ app.get('/status', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-	res.render('index.ejs', { title: 'InterpreteTS - JISON', salida: '', codigo:""});
+	res.render('index.ejs', { title: 'InterpreteTS - JISON', salida: '', codigo:"",svgString:''});
+});
+
+app.post('/arbol', (req, res) => {
+  res.redirect("/pr2.html")
 });
 
 app.post('/ejecutar', (req, res) => {
     let cadena_codigo = req.body.codigo; 
     let analizador = new Analizador(cadena_codigo, "editor");
-    
     let ast: AST = analizador.Analizar();
+
     if(ast != undefined) {
-        res.render('index.ejs', { title: 'InterpreteTS - JISON', salida: ast.getSalida(), codigo: cadena_codigo});
+        res.render('index.ejs', { title: 'InterpreteTS - JISON', salida: ast.getSalida(), codigo: cadena_codigo,svgString:"" });
     } else{
         res.render('index.ejs', { title: 'InterpreteTS - JISON', salida: 'ERROR al procesar cadena', codigo: cadena_codigo});
     }
-    manejarDatos(cadena_codigo);
 });
+
 
 
