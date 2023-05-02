@@ -10,6 +10,7 @@
     let AsignacionVector            =   require("../Instrucciones/AsignacionVector").AsignacionVector;
     let Ternario                    =   require("../Expresiones/Ternario").Ternario;
     let If                          =   require("../Instrucciones/If").If;
+    let FuncionLenguaje             =   require("../Expresiones/FuncionLenguaje").FuncionLenguaje;
     let AccesoVariable              =   require("../Expresiones/AccesoVariable").AccesoVariable;
     let AccesoLista                 =   require("../Expresiones/AccesoLista").AccesoLista;
     let AccesoVector                =   require("../Expresiones/AccesoVector").AccesoVector;
@@ -79,6 +80,12 @@ frac                        (?:\.[0-9]+)
 "default"                        {   return 'tdefault';     }
 "toLower"                      {   return 'ttoLower';     }
 "toUpper"                      {   return 'ttoUpper';     }
+"truncate"                      {   return 'ttruncate';     }
+"round"                      {   return 'tround';     }
+"length"                      {   return 'tlength';     }
+"typeOf"                      {   return 'ttypeOf';     }
+"toString"                      {   return 'ttoString';     }
+"toCharArray"                      {   return 'ttoCharArray';     }
 "main"                          {   return 'tmain';     }
 "print"                           {   return 'tPrint';    }
 "break"                           {   return 'tBreak';    }
@@ -266,7 +273,7 @@ DECLARACION : TIPO  id  '=' EXP
             {
                 $$ = new DeclararVariable($1, $2, undefined, @2.first_line, @2.first_column);
             }
-            | TIPO '[' ']' id '=' tnew TIPO '[' entero ']' 
+            | TIPO '[' ']' id '=' tnew TIPO '[' EXP ']' 
             {
                 $$ = new DeclararArreglo($1, $4, $7,undefined, $9, @2.first_line, @2.first_column);
             }
@@ -276,7 +283,11 @@ DECLARACION : TIPO  id  '=' EXP
             }
             | tlist '<' TIPO '>' id '=' tnew tlist '<' TIPO '>'
             {
-                $$ = new DeclararLista($3, $5, $10, @2.first_line, @2.first_column);
+                $$ = new DeclararLista($3, $5, $10,undefined, @2.first_line, @2.first_column);
+            }
+            | tlist '<' TIPO '>' id '=' EXP
+            {
+                $$ = new DeclararLista($3, $5, undefined, $7,  @2.first_line, @2.first_column);
             }
 ;
 
@@ -286,7 +297,7 @@ ASIGNACION  :    id '=' EXP ';'
             }
 ;
 
-VECTOR_ADD  :   id '[' entero ']' '=' EXP ';'
+VECTOR_ADD  :   id '[' EXP ']' '=' EXP ';'
             {
                 $$ = new AsignacionVector($1, $6, $3,@1.first_line, @1.first_column);
             }
@@ -310,7 +321,7 @@ CASTEO: '(' TIPO ')' EXP
     }
 ;
 
-LISTA_MODIFICAR: id '[' '[' entero ']' ']' '=' EXP
+LISTA_MODIFICAR: id '[' '[' EXP ']' ']' '=' EXP
             {
                 $$ = new ModificarLista($1, $4, $8, @1.first_line, @1.first_column);
             }
@@ -425,6 +436,21 @@ ACTUALIZACION_FOR: id '++'
         {
            $$ = new Decremento($1, @1.first_line, @1.first_column) 
         }
+        | id '=' EXP
+        {
+           $$ = new Asignacion($1, $3, @1.first_line, @1.first_column); 
+        }
+;
+
+FUNCIONES_LENGUAJE
+    : ttoLower '(' EXP ')' {$$ = new FuncionLenguaje($1, $3, @1.first_line, @1.first_column);}
+    | ttoUpper '(' EXP ')' {$$ = new FuncionLenguaje($1, $3, @1.first_line, @1.first_column);}
+    | ttruncate '(' EXP ')' {$$ = new FuncionLenguaje($1, $3, @1.first_line, @1.first_column);}
+    | tround '(' EXP ')' {$$ = new FuncionLenguaje($1, $3, @1.first_line, @1.first_column);}
+    | ttoCharArray '(' EXP ')' {$$ = new FuncionLenguaje($1, $3, @1.first_line, @1.first_column);}
+    | ttoString '(' EXP ')' {$$ = new FuncionLenguaje($1, $3, @1.first_line, @1.first_column);}
+    | ttypeOf '(' EXP ')' {$$ = new FuncionLenguaje($1, $3, @1.first_line, @1.first_column);}
+    | tlength '(' EXP ')' {$$ = new FuncionLenguaje($1, $3, @1.first_line, @1.first_column);}
 ;
 
 EXP :   EXP '+' EXP                     { $$ = new OperacionAritmetica($1, $2, $3, @2.first_line, @2.first_column);}
@@ -434,6 +460,7 @@ EXP :   EXP '+' EXP                     { $$ = new OperacionAritmetica($1, $2, $
     |   EXP '^' EXP                     { $$ = new OperacionAritmetica($1, $2, $3, @2.first_line, @2.first_column);}
     |   '-' EXP %prec negativo          { $$ = new OperacionAritmetica($2, "negativo", $2, @2.first_line, @2.first_column);}
     |   '(' EXP ')'                     { $$ = $2;}
+    |   EXP '%' EXP                     { $$ = new OperacionAritmetica($1, $2, $3, @2.first_line, @2.first_column);}
     |   EXP '=='  EXP                   { $$ = new OperacionRelacional($1, $2, $3, @2.first_line, @2.first_column);}
     |   EXP '!='  EXP                   { $$ = new OperacionRelacional($1, $2, $3, @2.first_line, @2.first_column);}
     |   EXP '<'   EXP                   { $$ = new OperacionRelacional($1, $2, $3, @2.first_line, @2.first_column);}
@@ -454,4 +481,5 @@ EXP :   EXP '+' EXP                     { $$ = new OperacionAritmetica($1, $2, $
     |   tfalse                          { $$ = new Valor($1, "false", @1.first_line, @1.first_column);  }
     |   TERNARIA                        { $$ = $1;}
     |   CASTEO                          { $$ = $1;}
+    |   FUNCIONES_LENGUAJE              { $$ = $1;}
 ;

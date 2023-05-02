@@ -6,10 +6,10 @@ import { Instruccion } from "../Entorno/Instruccion";
 export class ModificarLista extends Instruccion {
 
     id: string;
-    pos: number;
+    pos: Expresion;
     valor: Expresion;
 
-    constructor(id: string, pos:number, valor:Expresion, linea: number, columna: number) {
+    constructor(id: string, pos:Expresion, valor:Expresion, linea: number, columna: number) {
         super(linea, columna);
         this.id = id;
         this.pos = pos;
@@ -33,7 +33,8 @@ export class ModificarLista extends Instruccion {
             if (valorTipo.getPrimitivo() != listaTipo) {
                 throw new Error(`ERROR => El tipo de la lista y el valor a modificar no son los mismos en: ${this.id}`);
             }else{
-                lista.modificarValor(this.pos, valor); 
+                let posi=this.pos.getValor(actual, global, ast)
+                lista.modificarValor(posi, valor); 
             }
         }
 

@@ -7,10 +7,10 @@ import { TipoPrimitivo } from "../Entorno/Simbolos/TipoPrimitivo";
 export class AsignacionVector extends Instruccion {
 
     id:     string;
-    pos:    number;
+    pos:    Expresion;
     exp:    Expresion;
 
-    constructor(id: string, exp: Expresion, pos:number,linea: number, columna: number) {
+    constructor(id: string, exp: Expresion, pos:Expresion,linea: number, columna: number) {
         
         super(linea, columna);
         this.id = id;
@@ -32,8 +32,8 @@ export class AsignacionVector extends Instruccion {
         if(variable.getTipo().getPrimitivo() != this.exp.tipo.getPrimitivo()) {
             throw new Error("ERROR => El tipo del valor asignado no corresponde al vector " + this.id);
         }
-
-        variable.agregarValor(valor_asig,this.pos);
+        let posi=this.pos.getValor(actual, global, ast)
+        variable.agregarValor(valor_asig,posi);
 
     }
 }

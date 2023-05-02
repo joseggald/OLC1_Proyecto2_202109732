@@ -48,6 +48,10 @@ export class OperacionAritmetica extends Expresion {
                 {
                     return this.Negativo(val1, tipo1, actual, global, ast);
                 }
+        case "%":
+                {
+                    return this.Modulo(val1, tipo1, val2, tipo2, actual, global, ast);
+                }
         }
     }
     
@@ -62,7 +66,16 @@ export class OperacionAritmetica extends Expresion {
             return val1-(val1*2);
         }
     }
+    public Modulo(val1: any, tipo1: Tipo, val2: any, tipo2: Tipo, actual: Ambito, global: Ambito, ast: AST): any {
+        let prim1: TipoPrimitivo = tipo1.getPrimitivo();
+        let prim2: TipoPrimitivo = tipo2.getPrimitivo();
 
+        if ((prim1 == TipoPrimitivo.Integer || prim1 == TipoPrimitivo.Double) && (prim2 == TipoPrimitivo.Integer || prim2 == TipoPrimitivo.Double)) {
+            this.tipo = new Tipo(TipoPrimitivo.Double);
+            return val1 % val2;
+        }
+
+    }
     public Suma(val1: any, tipo1: Tipo, val2: any, tipo2: Tipo, actual: Ambito, global: Ambito, ast: AST): any {
         let prim1: TipoPrimitivo = tipo1.getPrimitivo();
         let prim2: TipoPrimitivo = tipo2.getPrimitivo();

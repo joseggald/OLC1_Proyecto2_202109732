@@ -24,8 +24,7 @@ export class For extends Instruccion {
 
     public ejecutar(actual: Ambito, global: Ambito, ast: AST) {
         let ambito_local = new Ambito(actual);
-        this.inicializador.ejecutar(ambito_local, global, ast);
-        let a,b;
+        this.inicializador.ejecutar(actual, global, ast);
         while (this.condicion.getValor(ambito_local, global, ast)) {
             for (let sentencia of this.sentencias) {
                 if (sentencia instanceof Instruccion){

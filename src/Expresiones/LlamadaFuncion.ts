@@ -179,8 +179,7 @@ export class LlamadaFuncion extends Expresion {
                                 } 
                             }
                             if(sentencia instanceof Expresion){
-                                a=sentencia.getValor(ambito, global, ast);
- 
+                                let a=sentencia.getValor(ambito, global, ast);
                                 if(sentencia instanceof ReturnPR){
                                     if (a=="return"){
                                         let tipoData=new Tipo(TipoPrimitivo.Integer);
@@ -329,7 +328,13 @@ export class LlamadaFuncion extends Expresion {
                         let sentencias=actual_func.getSetencias();
                         for(let sentencia of sentencias){ 
                             if(sentencia instanceof Instruccion) {
-                                let s=sentencia.ejecutar(ambito, global, ast); 
+                                let s;
+                                if(sentencia instanceof LlamadaFuncion){
+                                    s=sentencia.ejecutar(global, global, ast);
+                                }else{
+                                    s=sentencia.ejecutar(ambito, global, ast);
+                                }
+
                                 if (s!=undefined) {
                                     if(s=="return"){
                                         return; 

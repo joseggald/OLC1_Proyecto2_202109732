@@ -13,9 +13,9 @@ export class DeclararArreglo extends Instruccion{
     ctipo:   Tipo;
     id:     string;
     objetos: Expresion[]; 
-    tam:    number;
+    tam:    Expresion;
 
-    constructor(tipo: Tipo, id: string,ctipo: Tipo,objetos: Expresion[], tam:number ,linea: number, columna: number) {
+    constructor(tipo: Tipo, id: string,ctipo: Tipo,objetos: Expresion[], tam:Expresion ,linea: number, columna: number) {
         super(linea, columna);
         this.tipo = tipo;
         this.id = id;
@@ -79,7 +79,7 @@ export class DeclararArreglo extends Instruccion{
             }
         }else if(this.ctipo.getPrimitivo()===this.tipo.getPrimitivo()){
             console.log(this.tam);
-            let array: Expresion[] =  new Array(this.tam);
+            let array: Expresion[] =  new Array(this.tam.getValor(actual, global, ast));
             let nuevo_arr=new Arreglo(this.tipo,this.id,this.ctipo,array);
             actual.insertarArreglo(this.id,nuevo_arr);
         }else if(this.ctipo!=this.tipo && this.ctipo!=undefined){
