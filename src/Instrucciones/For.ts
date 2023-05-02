@@ -3,7 +3,6 @@ import { AST } from "../Entorno/AST";
 import { Expresion } from "../Entorno/Expresion";
 import { Instruccion } from "../Entorno/Instruccion";
 import { Nodo } from "../Entorno/Nodo";
-import { Return } from "./Return";
 import { If } from "./If";
 import { ReturnPR } from "../Expresiones/ReturnPR";
 

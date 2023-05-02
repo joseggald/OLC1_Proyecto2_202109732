@@ -166,7 +166,7 @@ INICIO
         $$ = raiz;
         return raiz;
     }
-    ;
+;
 
 SENTENCIAS :    SENTENCIAS SENTENCIA
             {
@@ -250,7 +250,7 @@ RETURN  :   treturn ';'                     { $$ = new ReturnPR(undefined,@2.fir
 BREAK  :   tBreak ';'                     { $$ = new Break(@2.first_line, @2.first_column); }
 ;
 
-RETURN  :   tContinue ';'                     { $$ = new Continue(@2.first_line, @2.first_column); }
+CONTINUE  :   tContinue ';'                     { $$ = new Continue(@2.first_line, @2.first_column); }
 ;
 
 INCREMENTO : id '++'
@@ -394,6 +394,7 @@ TIPO    :       tinteger                    { $$ = new Tipo(TipoPrimitivo.Intege
         |       tboolean                    { $$ = new Tipo(TipoPrimitivo.Boolean); }
         |       tstring                     { $$ = new Tipo(TipoPrimitivo.String);  }
         |       tdouble                     { $$ = new Tipo(TipoPrimitivo.Double);  }
+        |       tchar                    { $$ = new Tipo(TipoPrimitivo.Char);  }
 ; 
 
 LISTA_PARAM :   LISTA_PARAM ',' TIPO id
