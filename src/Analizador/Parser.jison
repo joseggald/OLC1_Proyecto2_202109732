@@ -20,11 +20,13 @@
     let OperacionRelacional         =   require("../Expresiones/OperacionRelacional").OperacionRelacional;
     let While                       =   require("../Instrucciones/While").While;
     let ReturnPR                    =   require("../Expresiones/ReturnPR").ReturnPR;
-    let Break                    =   require("../Expresiones/Break").Break;
+    let Break                       =   require("../Expresiones/Break").Break;
     let Continue                    =   require("../Expresiones/Continue").Continue;
     let Valor                       =   require("../Expresiones/Valor").Valor;
     let Incremento                  =   require("../Instrucciones/Incremento").Incremento;
     let Decremento                  =    require("../Instrucciones/Decremento").Decremento;
+    let Switch                      =   require("../Instrucciones/Switch").Switch;
+    let CaseSwitch                  =    require("../Instrucciones/CaseSwitch").CaseSwitch;
     let For                         =    require("../Instrucciones/For").For;
     let DoWhile                     =   require("../Instrucciones/DoWhile").DoWhile;
     let Casteo                      =    require("../Expresiones/Casteo").Casteo;
@@ -201,9 +203,34 @@ SENTENCIA :     DECLARACION ';'             { $$ = $1; }
             |   RETURN                    { $$ = $1; }
             |   BREAK                    { $$ = $1; }
             |   CONTINUE                    { $$ = $1; }
+            |   SWITCH                    { $$ = $1; }
 ;
 
-MAIN : tmain LLAMADA_FUNCION    { $$ = $1; }
+SWITCH
+  : tswitch '(' EXP ')' BLOCK_SWITCH { $$ = new Switch($3, $5, @1.first_line, @1.first_column); }
+;
+
+BLOCK_SWITCH
+  : '{'  L_CASE '}'         { $$ = $2; }
+  | '{' '}'                { $$ = []; }
+;
+
+L_CASE
+  : L_CASE CASES  { $$=$1; $$.push($2);}
+  | CASES         { $$=[]; $$.push($1); }
+;
+
+CASES
+  : tcase EXP BLOCK_CASES        { $$ = new CaseSwitch($2, $3, this._$.first_line, this._$.first_column);}
+  | tdefault BLOCK_CASES         { $$ = new CaseSwitch(null, $2, this._$.first_line, this._$.first_column);}
+;
+
+BLOCK_CASES
+  : ':' SENTENCIAS       { $$ = $2; }
+  | ':'                 { $$ = []; }
+;
+
+MAIN : tmain LLAMADA_FUNCION    { $$ = $2; }
 ;
 
 PRINT : tPrint '(' LISTA_EXP ')' { $$ = new LlamadaPrint($1, $3, @1.first_line, @1.first_column);    }

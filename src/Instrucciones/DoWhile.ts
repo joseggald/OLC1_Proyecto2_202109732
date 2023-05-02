@@ -4,7 +4,6 @@ import { Expresion } from "../Entorno/Expresion";
 import { Instruccion } from "../Entorno/Instruccion";
 import { Nodo } from "../Entorno/Nodo";
 import { ReturnPR } from "../Expresiones/ReturnPR";
-import { Return } from "./Return";
 
 export class DoWhile extends Instruccion {
 
@@ -34,8 +33,6 @@ export class DoWhile extends Instruccion {
                         }else if(s=="continue"){
                             console.log("continue while")
                             continue;
-                        }else{
-                            return s;
                         }
                     } 
                 }
@@ -46,6 +43,14 @@ export class DoWhile extends Instruccion {
                             return "return";
                         }else{
                             return a;
+                        }
+                    } 
+                    if (a!=undefined) {
+                        if(a=="continue"){
+                            console.log("continue while")
+                            continue;
+                        }else if(a=="break"){
+                            return;
                         }
                     }            
                 }

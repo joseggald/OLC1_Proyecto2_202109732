@@ -33,10 +33,15 @@ export class For extends Instruccion {
                     if (s!=undefined) {
                         if(s=="return"){
                             return "return";
+                        }else if(s=="break"){
+                            return;
+                        }else if(s=="continue"){
+                            console.log("continue while")
+                            continue;
                         }else{
                             return s;
                         }
-                    } 
+                    }  
                 }
                 if(sentencia instanceof Expresion){
                     let a=sentencia.getValor(actual, global, ast);  
@@ -46,7 +51,15 @@ export class For extends Instruccion {
                         }else{
                             return a;
                         }
-                    }            
+                    }   
+                    if (a!=undefined) {
+                        if(a=="continue"){
+                            console.log("continue while")
+                            continue;
+                        }else if(a=="break"){
+                            return;
+                        }
+                    }          
                 }
             }
             this.actualizacion.ejecutar(ambito_local, global, ast);
