@@ -41,8 +41,6 @@ export class Asignacion extends Instruccion {
             }else {
                 throw new Error("ERROR => El tipo del valor asignado no corresponde a la variable " + this.id);
             }
-        }
-        
+        }   
     }
-
 }
