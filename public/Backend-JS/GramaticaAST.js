@@ -71,7 +71,7 @@
     recoverable: (boolean: TRUE when the parser has a error recovery rule available for this particular error)
   }
 */
-var grammar = (function(){
+var GramaticaAST = (function(){
 var o=function(k,v,o,l){for(o=o||{},l=k.length;l--;o[k[l]]=v);return o},$V0=[1,5],$V1=[1,23],$V2=[1,38],$V3=[1,34],$V4=[1,33],$V5=[1,35],$V6=[1,36],$V7=[1,37],$V8=[1,28],$V9=[1,26],$Va=[1,29],$Vb=[1,32],$Vc=[1,30],$Vd=[1,31],$Ve=[1,27],$Vf=[1,39],$Vg=[1,40],$Vh=[1,41],$Vi=[1,42],$Vj=[1,43],$Vk=[5,9,28,30,37,39,41,42,44,45,46,47,56,64,67,68,69,72,73,74,75,76,77],$Vl=[2,11],$Vm=[1,52],$Vn=[1,58],$Vo=[1,57],$Vp=[1,67],$Vq=[1,66],$Vr=[1,80],$Vs=[1,74],$Vt=[1,75],$Vu=[1,81],$Vv=[1,73],$Vw=[1,82],$Vx=[1,83],$Vy=[1,84],$Vz=[1,85],$VA=[1,86],$VB=[33,47,52,58],$VC=[2,46],$VD=[1,90],$VE=[2,5,9,28,30,37,39,41,42,44,45,46,47,56,64,66,67,68,69,72,73,74,75,76,77],$VF=[1,124],$VG=[1,125],$VH=[1,130],$VI=[1,117],$VJ=[1,118],$VK=[1,119],$VL=[1,120],$VM=[1,121],$VN=[1,122],$VO=[1,123],$VP=[1,126],$VQ=[1,127],$VR=[1,128],$VS=[1,129],$VT=[2,9,11,33,40,53,57,58,62,78,88,89,90,91,92,93,94,95,96,97,98],$VU=[1,149],$VV=[9,33,78],$VW=[1,184],$VX=[2,9,11,33,40,53,57,58,62,78,88,89,93,94,95,96,97,98],$VY=[2,9,11,33,40,53,57,58,62,78,88,89,90,91,93,94,95,96,97,98],$VZ=[2,9,11,33,40,53,62,78,93,94,97,98],$V_=[2,9,11,33,40,53,57,58,62,78,93,94,95,96,97,98],$V$=[33,78],$V01=[1,238],$V11=[1,239],$V21=[1,251],$V31=[9,37,39],$V41=[1,265],$V51=[2,33];
 var parser = {trace: function trace () { },
 yy: {},
@@ -1131,9 +1131,9 @@ return new Parser;
 
 
 if (typeof require !== 'undefined' && typeof exports !== 'undefined') {
-exports.parser = grammar;
-exports.Parser = grammar.Parser;
-exports.parse = function () { return grammar.parse.apply(grammar, arguments); };
+exports.parser = GramaticaAST;
+exports.Parser = GramaticaAST.Parser;
+exports.parse = function () { return GramaticaAST.parse.apply(GramaticaAST, arguments); };
 exports.main = function commonjsMain (args) {
     if (!args[1]) {
         console.log('Usage: '+args[0]+' FILE');

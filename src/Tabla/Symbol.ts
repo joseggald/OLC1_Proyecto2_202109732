@@ -12,4 +12,5 @@ export class Symbol{
         this.linea = linea;
         this.columna = columna;
     }
+    
 }

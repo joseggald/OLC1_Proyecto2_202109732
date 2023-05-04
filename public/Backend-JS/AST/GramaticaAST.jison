@@ -45,6 +45,12 @@ frac                        (?:\.[0-9]+)
 "default"                        {   return 'tdefault';     }
 "toLower"                      {   return 'ttoLower';     }
 "toUpper"                      {   return 'ttoUpper';     }
+"truncate"                      {   return 'ttruncate';     }
+"round"                      {   return 'tround';     }
+"length"                      {   return 'tlength';     }
+"typeOf"                      {   return 'ttypeOf';     }
+"toString"                      {   return 'ttoString';     }
+"toCharArray"                      {   return 'ttoCharArray';     }
 "main"                          {   return 'tmain';     }
 "print"                           {   return 'tPrint';    }
 "break"                           {   return 'tBreak';    }
@@ -60,7 +66,6 @@ frac                        (?:\.[0-9]+)
 //Error                                                                                              return 'entero'
 
 /* ======================== SIGNOS ======================= */
-"$"                             {return '$'};
 "."                             {return '.'};
 "++"                            {return '++';}
 "--"                            {return '--';}
@@ -90,7 +95,7 @@ frac                        (?:\.[0-9]+)
 "}"                             {return '}';}
 "["                             {return '[';}
 "]"                             {return ']';}
-. { console.log(`El caracter: "${yytext}" no pertenece al lenguaje`); }
+. {  }
 
 
 /lex
@@ -119,8 +124,8 @@ frac                        (?:\.[0-9]+)
 
 INICIO
     : SENTENCIAS EOF{ $$ = { val: 0, node: newNode(yy, yystate, $1.node,'EOF')}; return $$;}
-	| EOF{ $$ = { val: 0, node: newNode(yy, yystate,'EOF')}; return $$;}
-    ;
+	| EOF   { $$ = { val: 0, node: newNode(yy, yystate,'EOF')}; return $$;}
+;
 
 SENTENCIAS :    SENTENCIAS SENTENCIA
             {
@@ -129,7 +134,7 @@ SENTENCIAS :    SENTENCIAS SENTENCIA
             |   SENTENCIA
             {
                 $$ = { val: 0, node: newNode(yy, yystate, $1.node)};
-            }
+            }     
 ;
 
 BLOQUE_SENTENCAS : '{' SENTENCIAS '}'
@@ -139,7 +144,7 @@ BLOQUE_SENTENCAS : '{' SENTENCIAS '}'
                 |  '{' '}'
                 {
                         $$ = { val: 0, node: newNode(yy, yystate, $1,$2)};
-                }
+                } 
 ;
 
 
@@ -161,6 +166,29 @@ SENTENCIA :     DECLARACION ';'             { $$ = { val: 0, node: newNode(yy, y
             |   RETURN                    { $$ = { val: 0, node: newNode(yy, yystate, $1.node)};}
             |   BREAK                    { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
             |   CONTINUE                    { $$ = { val: 0, node: newNode(yy, yystate, $1.node)};}
+            |   SWITCH                    { $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
+;
+SWITCH: tswitch '(' EXP ')' BLOCK_SWITCH { $$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node,$4,$5.node)};  }
+;
+
+BLOCK_SWITCH
+  : '{'  CONT_CASE '}'         { $$ = { val: 0, node: newNode(yy, yystate, $1,$2.node,$3)}; }
+  | '{' '}'                { $$ = { val: 0, node: newNode(yy, yystate, $1,$2)};}
+;
+
+CONT_CASE
+  : CONT_CASE CASES  { $$ = { val: 0, node: newNode(yy, yystate, $1.node,$2.node)}; }
+  | CASES         { $$ = { val: 0, node: newNode(yy, yystate, $1.node)};}
+;
+
+CASES
+  : tcase EXP BLOCK_CASES        { $$ = { val: 0, node: newNode(yy, yystate, $1,$2.node,$3.node)}; }
+  | tdefault BLOCK_CASES         { $$ = { val: 0, node: newNode(yy, yystate, $1,$2.node)}; }
+;
+
+BLOCK_CASES
+  : ':' SENTENCIAS       { $$ = { val: 0, node: newNode(yy, yystate, $1,$2.node)}; }
+  | ':'                 { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
 ;
 
 MAIN : tmain LLAMADA_FUNCION  ';'  { $$ = { val: 0, node: newNode(yy, yystate, $1,$2.node, $3)}; }
@@ -350,6 +378,16 @@ ACTUALIZACION_FOR: id '++'
            $$ = { val: 0, node: newNode(yy, yystate, $1,$2)};
         }
 ;
+FUNCION_LENGUAJE
+    : ttoLower '(' EXP ')' {$$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node,$4)};}
+    | ttoUpper '(' EXP ')' {$$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node,$4)};}
+    | ttruncate '(' EXP ')' {$$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node,$4)};}
+    | tround '(' EXP ')' {$$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node,$4)};}
+    | ttoCharArray '(' EXP ')' {$$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node,$4)};}
+    | ttoString '(' EXP ')' {$$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node,$4)};}
+    | ttypeOf '(' EXP ')' {$$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node,$4)};}
+    | tlength '(' EXP ')' {$$ = { val: 0, node: newNode(yy, yystate, $1,$2,$3.node,$4)};}   
+;
 
 EXP :   EXP '+' EXP                     { $$ = { val: 0, node: newNode(yy, yystate, $1.node, $2,$3.node)}; }
     |   EXP '-' EXP                     { $$ = { val: 0, node: newNode(yy, yystate, $1.node, $2,$3.node)};  }
@@ -370,12 +408,15 @@ EXP :   EXP '+' EXP                     { $$ = { val: 0, node: newNode(yy, yysta
     |   id '[' EXP ']'                  {   $$ = { val: 0, node: newNode(yy, yystate, $1,$2, $3.node, $4)};   }
     |   id  '[' '[' EXP ']' ']'         { $$ = { val: 0, node: newNode(yy, yystate, $1, $2,$3,$4.node, $5,$6)};  }
     |   LLAMADA_FUNCION                 {$$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-    |   entero                          {$$ = { val: 0, node: newNode(yy, yystate, $1)}; }
+    |   TERNARIA                        { $$ = { val: 0, node: newNode(yy, yystate, $1.node)};  }
+    |   CASTEO                          {  $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
+    |   PRIMITIVO                      {$$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
+;
+
+PRIMITIVO :   entero                          {$$ = { val: 0, node: newNode(yy, yystate, $1)}; }
     |   decimal                         {$$ = { val: 0, node: newNode(yy, yystate, $1)};  }
     |   caracter                        {  $$ = { val: 0, node: newNode(yy, yystate, $1)};  }
     |   cadena                          { $$ = { val: 0, node: newNode(yy, yystate, $1)}; }
     |   ttrue                           { $$ = { val: 0, node: newNode(yy, yystate, $1)};  }
     |   tfalse                          { $$ = { val: 0, node: newNode(yy, yystate, $1)};  }
-    |   TERNARIA                        { $$ = { val: 0, node: newNode(yy, yystate, $1.node)};  }
-    |   CASTEO                          {  $$ = { val: 0, node: newNode(yy, yystate, $1.node)}; }
-;
+;   

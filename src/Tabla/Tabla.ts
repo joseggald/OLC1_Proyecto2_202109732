@@ -11,6 +11,7 @@ export class Tabla{
         this.miArregloEstatico.push(sim);
     }
 
+
     static mostrarTabla(): void{
         for (let index = 0; index < this.miArregloEstatico.length; index++) {
             console.log(this.miArregloEstatico[index])

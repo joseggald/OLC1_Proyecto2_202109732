@@ -1,0 +1,10 @@
+digraph G {
+      node[shape=plaintext]
+      table [label=<<table border="1" cellspacing="0">
+          <tr><td>Identificador</td><td>Tipo</td><td>Tipo</td><td>Linea</td><td>Columna</td></tr>
+          undefined<tr><td>edad</td><td>Variable</td><td>Entero</td><td>1</td><td>4</td></tr>
+<tr><td>letra</td><td>Variable</td><td>Char</td><td>4</td><td>5</td></tr>
+<tr><td>numero</td><td>Variable</td><td>Double</td><td>7</td><td>7</td></tr>
+
+      </table>>]
+  }

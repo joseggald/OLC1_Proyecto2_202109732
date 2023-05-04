@@ -6,6 +6,8 @@ import { Funcion } from "../Entorno/Simbolos/Funcion";
 import { Tipo } from "../Entorno/Simbolos/Tipo";
 import { TipoPrimitivo } from "../Entorno/Simbolos/TipoPrimitivo";
 import { DeclararVariable } from "./DeclararVariable";
+import { Symbol } from "../Tabla/Symbol";
+import { Tabla } from "../Tabla/Tabla";
 
 export class DeclararFuncion extends Instruccion {
     
@@ -31,7 +33,8 @@ export class DeclararFuncion extends Instruccion {
         if(this.tipo.getPrimitivo()==TipoPrimitivo.Integer){
             if(this.parametros.length==0){
                 let nFuncion= new Funcion(this.tipo,this.nombre,0,null,this.sentencias,[])
-                actual.insertarFuncion(this.nombre,nFuncion);        
+                actual.insertarFuncion(this.nombre,nFuncion);   
+                Tabla.insertarSimbolo(new Symbol(this.nombre, "Función", this.establecerTipo(), (this.linea).toString(), (this.columna).toString()));     
             }else{
                 let array=[];
                 for(let i = 0; i<this.parametros.length; i++){
@@ -43,12 +46,14 @@ export class DeclararFuncion extends Instruccion {
                 }
                 let nFuncion= new Funcion(this.tipo,this.nombre,this.parametros.length,array,this.sentencias,this.parametros)
                 actual.insertarFuncion(this.nombre,nFuncion);
+                Tabla.insertarSimbolo(new Symbol(this.nombre, "Función", this.establecerTipo(), (this.linea).toString(), (this.columna).toString()));
             }
         }
         if(this.tipo.getPrimitivo()==TipoPrimitivo.Double){
             if(this.parametros.length==0){
                 let nFuncion= new Funcion(this.tipo,this.nombre,0,null,this.sentencias,[])
-                actual.insertarFuncion(this.nombre,nFuncion);        
+                actual.insertarFuncion(this.nombre,nFuncion);  
+                Tabla.insertarSimbolo(new Symbol(this.nombre, "Función", this.establecerTipo(), (this.linea).toString(), (this.columna).toString()));      
             }else{
                 let array=[];
                 for(let i = 0; i<this.parametros.length; i++){
@@ -61,12 +66,14 @@ export class DeclararFuncion extends Instruccion {
                 }
                 let nFuncion= new Funcion(this.tipo,this.nombre,this.parametros.length,array,this.sentencias,this.parametros)
                 actual.insertarFuncion(this.nombre,nFuncion);
+                Tabla.insertarSimbolo(new Symbol(this.nombre, "Función", this.establecerTipo(), (this.linea).toString(), (this.columna).toString()));
             }
         }
         if(this.tipo.getPrimitivo()==TipoPrimitivo.String){
             if(this.parametros.length==0){
                 let nFuncion= new Funcion(this.tipo,this.nombre,0,null,this.sentencias,[])
-                actual.insertarFuncion(this.nombre,nFuncion);        
+                actual.insertarFuncion(this.nombre,nFuncion); 
+                Tabla.insertarSimbolo(new Symbol(this.nombre, "Función", this.establecerTipo(), (this.linea).toString(), (this.columna).toString()));       
             }else{
                 let array=[];
                 for(let i = 0; i<this.parametros.length; i++){
@@ -79,12 +86,15 @@ export class DeclararFuncion extends Instruccion {
                 }
                 let nFuncion= new Funcion(this.tipo,this.nombre,this.parametros.length,array,this.sentencias,this.parametros)
                 actual.insertarFuncion(this.nombre,nFuncion);
+
+                Tabla.insertarSimbolo(new Symbol(this.nombre, "Función", this.establecerTipo(), (this.linea).toString(), (this.columna).toString()));
             }
         }
         if(this.tipo.getPrimitivo()==TipoPrimitivo.Char){
             if(this.parametros.length==0){
                 let nFuncion= new Funcion(this.tipo,this.nombre,0,null,this.sentencias,[])
-                actual.insertarFuncion(this.nombre,nFuncion);        
+                actual.insertarFuncion(this.nombre,nFuncion); 
+                Tabla.insertarSimbolo(new Symbol(this.nombre, "Función", this.establecerTipo(), (this.linea).toString(), (this.columna).toString()));       
             }else{
                 let array=[];
                 for(let i = 0; i<this.parametros.length; i++){
@@ -97,12 +107,14 @@ export class DeclararFuncion extends Instruccion {
                 }
                 let nFuncion= new Funcion(this.tipo,this.nombre,this.parametros.length,array,this.sentencias, this.parametros)
                 actual.insertarFuncion(this.nombre,nFuncion);
+                Tabla.insertarSimbolo(new Symbol(this.nombre, "Función", this.establecerTipo(), (this.linea).toString(), (this.columna).toString()));
             }
         }
         if(this.tipo.getPrimitivo()==TipoPrimitivo.Boolean){
             if(this.parametros.length==0){
                 let nFuncion= new Funcion(this.tipo,this.nombre,0,null,this.sentencias,[])
-                actual.insertarFuncion(this.nombre,nFuncion);        
+                actual.insertarFuncion(this.nombre,nFuncion);     
+                Tabla.insertarSimbolo(new Symbol(this.nombre, "Función", this.establecerTipo(), (this.linea).toString(), (this.columna).toString()));   
             }else{
                 let array=[];
                 for(let i = 0; i<this.parametros.length; i++){
@@ -115,12 +127,14 @@ export class DeclararFuncion extends Instruccion {
                 }
                 let nFuncion= new Funcion(this.tipo,this.nombre,this.parametros.length,array,this.sentencias,this.parametros)
                 actual.insertarFuncion(this.nombre,nFuncion);
+                Tabla.insertarSimbolo(new Symbol(this.nombre, "Función", this.establecerTipo(), (this.linea).toString(), (this.columna).toString()));
             }
         }
         if(this.tipo.getPrimitivo()==TipoPrimitivo.Void){
             if(this.parametros.length==0){
                 let nFuncion= new Funcion(this.tipo,this.nombre,0,null,this.sentencias,[])
-                actual.insertarFuncion(this.nombre,nFuncion);        
+                actual.insertarFuncion(this.nombre,nFuncion);     
+                Tabla.insertarSimbolo(new Symbol(this.nombre, "Función", this.establecerTipo(), (this.linea).toString(), (this.columna).toString()));   
             }else{
                 let array=[];
                 for(let i = 0; i<this.parametros.length; i++){
@@ -129,8 +143,29 @@ export class DeclararFuncion extends Instruccion {
                 }
                 let nFuncion= new Funcion(this.tipo,this.nombre,this.parametros.length,array,this.sentencias,this.parametros)
                 actual.insertarFuncion(this.nombre,nFuncion);
+                Tabla.insertarSimbolo(new Symbol(this.nombre, "Función", this.establecerTipo(), (this.linea).toString(), (this.columna).toString()));
             }
         }
         
+    }
+    private establecerTipo(){
+        let valor = this.tipo.getPrimitivo();
+    
+        switch (valor) {
+            case 0:
+                return "Entero"
+            case 1: 
+                return "Double"
+            case 2:
+                return "Char"
+            case 3: 
+                return "String"
+            case 4: 
+                return "Null"
+            case 5: 
+                return "Boolean"
+            case 6: 
+                return "Void"
+        }
     }
 }

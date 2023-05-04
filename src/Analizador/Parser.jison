@@ -33,6 +33,8 @@
     let Casteo                      =    require("../Expresiones/Casteo").Casteo;
     let InsertarLista               =    require("../Instrucciones/InsertarLista").InsertarLista;
     let ModificarLista              =    require("../Instrucciones/ModificarLista").ModificarLista;
+    let Error                       =    require("../Tabla/Error").Error;
+    let TablaError                  =    require("../Tabla/TablaError").TablaError;
 %}
 /* description: Parses end executes mathematical expressions. */
 
@@ -101,7 +103,6 @@ frac                        (?:\.[0-9]+)
 //Error                                                                                              return 'entero'
 
 /* ======================== SIGNOS ======================= */
-"$"                             {return '$'};
 "."                             {return '.'};
 "++"                            {return '++';}
 "--"                            {return '--';}
@@ -131,7 +132,8 @@ frac                        (?:\.[0-9]+)
 "}"                             {return '}';}
 "["                             {return '[';}
 "]"                             {return ']';}
-. { console.log(`El caracter: "${yytext}" no pertenece al lenguaje`); }
+. {  TablaError.insertarError(new Error("Lexico", `El caracter: "${yytext}" no pertenece dentro del lenguaje`, yylloc.first_line,yylloc.first_column)); 
+    console.log("Lexico"+yytext+" "+ yylloc.first_line+" "+yylloc.first_column) }
 
 
 /lex
@@ -178,7 +180,8 @@ SENTENCIAS :    SENTENCIAS SENTENCIA
                 let lstsent = [];
                 lstsent.push($1);
                 $$ = lstsent;
-            }
+            } 
+            | error {   TablaError.insertarError(new Error("Sintactico", `El error parte tras: "${yytext}" no acorde a la gramatica.`,this._$.first_line, this._$.first_column));}           
 ;
 
 BLOQUE_SENTENCAS : '{' SENTENCIAS '}'
@@ -189,15 +192,16 @@ BLOQUE_SENTENCAS : '{' SENTENCIAS '}'
                 {
                         $$ = [];
                 }
+                | error '}' {   TablaError.insertarError(new Error("Sintactico", "Falta en el bloque de sentencias {",this._$.first_line, this._$.first_column));}      
 ;
 
 
 SENTENCIA :     DECLARACION ';'             { $$ = $1; }
             |   FUNCION                     { $$ = $1; }
-            |   LISTA_ADD                   { $$ = $1; }
+            |   LISTA_AGREGAR               { $$ = $1; }
             |   LISTA_MODIFICAR  ';'        { $$ = $1; }
             |   ASIGNACION                  { $$ = $1; }
-            |   VECTOR_ADD                  { $$ = $1; }
+            |   VECTOR_ASIGNAR              { $$ = $1; }
             |   IF                          { $$ = $1; }
             |   LLAMADA_FUNCION  ';'        { $$ = $1; }
             |   WHILE                       { $$ = $1; }
@@ -213,17 +217,16 @@ SENTENCIA :     DECLARACION ';'             { $$ = $1; }
             |   SWITCH                    { $$ = $1; }
 ;
 
-SWITCH
-  : tswitch '(' EXP ')' BLOCK_SWITCH { $$ = new Switch($3, $5, @1.first_line, @1.first_column); }
+SWITCH: tswitch '(' EXP ')' BLOCK_SWITCH { $$ = new Switch($3, $5, @1.first_line, @1.first_column); }
 ;
 
 BLOCK_SWITCH
-  : '{'  L_CASE '}'         { $$ = $2; }
+  : '{'  CONT_CASE '}'         { $$ = $2; }
   | '{' '}'                { $$ = []; }
 ;
 
-L_CASE
-  : L_CASE CASES  { $$=$1; $$.push($2);}
+CONT_CASE
+  : CONT_CASE CASES  { $$=$1; $$.push($2);}
   | CASES         { $$=[]; $$.push($1); }
 ;
 
@@ -265,6 +268,7 @@ DECREMENTO : id '--'
             }
 ;
 
+
 DECLARACION : TIPO  id  '=' EXP 
             {
                 $$ = new DeclararVariable($1, $2, $4, @2.first_line, @2.first_column);
@@ -297,13 +301,13 @@ ASIGNACION  :    id '=' EXP ';'
             }
 ;
 
-VECTOR_ADD  :   id '[' EXP ']' '=' EXP ';'
+VECTOR_ASIGNAR  :   id '[' EXP ']' '=' EXP ';'
             {
                 $$ = new AsignacionVector($1, $6, $3,@1.first_line, @1.first_column);
             }
 ;
 
-LISTA_ADD: id '.' tadd '(' EXP ')' ';'
+LISTA_AGREGAR: id '.' tadd '(' EXP ')' ';'
             {
                 $$ = new InsertarLista($1, $5, @1.first_line, @1.first_column);
             }
@@ -353,6 +357,9 @@ DO_WHILE : tdo BLOQUE_SENTENCAS twhile '(' EXP ')' ';'
         {
             $$ = new DoWhile($2, $5, @1.first_line, @1.first_column );
         }
+        |  tdo BLOQUE_SENTENCAS twhile error EXP ')' BLOQUE_SENTENCAS {   TablaError.insertarError(new Error("Sintactico", "El error en while falta '(' ",this._$.first_line, this._$.first_column));     }
+        |  tdo BLOQUE_SENTENCAS twhile  '(' EXP error BLOQUE_SENTENCAS {   TablaError.insertarError(new Error("Sintactico", "El error en while falta '(' ",this._$.first_line, this._$.first_column));     }
+        |  tdo BLOQUE_SENTENCAS error '(' EXP ')' BLOQUE_SENTENCAS {   TablaError.insertarError(new Error("Sintactico", "El error en while falta '(' ",this._$.first_line, this._$.first_column));     }
 ;
 
 FOR     : tfor '(' DECLARACION ';' EXP ';' ACTUALIZACION_FOR ')' BLOQUE_SENTENCAS
@@ -363,12 +370,19 @@ FOR     : tfor '(' DECLARACION ';' EXP ';' ACTUALIZACION_FOR ')' BLOQUE_SENTENCA
         {
             $$ = new For($3, $5, $7, $9, @1.first_line, @1.first_column );
         }
+        |   tfor '(' error ';' EXP ';' ACTUALIZACION_FOR ')' BLOQUE_SENTENCAS {   TablaError.insertarError(new Error("Sintactico", "El error en For falta declaracion o asignacion de una variable.",this._$.first_line, this._$.first_column));    }
+        |   tfor '(' DECLARACION error  EXP ';' ACTUALIZACION_FOR ')' BLOQUE_SENTENCAS {   TablaError.insertarError(new Error("Sintactico", "El error en For falta ';' ",this._$.first_line, this._$.first_column));     }
+        |   tfor '(' DECLARACION  ';' EXP error ACTUALIZACION_FOR ')' BLOQUE_SENTENCAS {   TablaError.insertarError(new Error("Sintactico", "El error en For falta ';' ",this._$.first_line, this._$.first_column));     }
+        |   tfor '(' DECLARACION  ';' EXP  ';' error ')' BLOQUE_SENTENCAS {   TablaError.insertarError(new Error("Sintactico", "El error en For falta el iterador ++/--/=+n ",this._$.first_line, this._$.first_column));    }
+        |   tfor '(' DECLARACION  ';' EXP  ';' ACTUALIZACION_FOR error BLOQUE_SENTENCAS {   TablaError.insertarError(new Error("Sintactico", "El error en For falta ';' ",this._$.first_line, this._$.first_column));     }
 ;
 
 WHILE   : twhile '(' EXP ')' BLOQUE_SENTENCAS
         {
             $$ = new While($3, $5, @1.first_line, @1.first_column );
         }
+        |    twhile error EXP ')' BLOQUE_SENTENCAS {   TablaError.insertarError(new Error("Sintactico", "El error en while falta '(' ",this._$.first_line, this._$.first_column));     }
+        |    twhile '(' EXP error BLOQUE_SENTENCAS {   TablaError.insertarError(new Error("Sintactico", "El error en while falta ')' ",this._$.first_line, this._$.first_column));     }
 ;
 
 FUNCION:        TIPO    id '(' LISTA_PARAM ')' BLOQUE_SENTENCAS
@@ -443,7 +457,7 @@ ACTUALIZACION_FOR: id '++'
         }
 ;
 
-FUNCIONES_LENGUAJE
+FUNCION_LENGUAJE
     : ttoLower '(' EXP ')' {$$ = new FuncionLenguaje($1, $3, @1.first_line, @1.first_column);}
     | ttoUpper '(' EXP ')' {$$ = new FuncionLenguaje($1, $3, @1.first_line, @1.first_column);}
     | ttruncate '(' EXP ')' {$$ = new FuncionLenguaje($1, $3, @1.first_line, @1.first_column);}
@@ -451,7 +465,7 @@ FUNCIONES_LENGUAJE
     | ttoCharArray '(' EXP ')' {$$ = new FuncionLenguaje($1, $3, @1.first_line, @1.first_column);}
     | ttoString '(' EXP ')' {$$ = new FuncionLenguaje($1, $3, @1.first_line, @1.first_column);}
     | ttypeOf '(' EXP ')' {$$ = new FuncionLenguaje($1, $3, @1.first_line, @1.first_column);}
-    | tlength '(' EXP ')' {$$ = new FuncionLenguaje($1, $3, @1.first_line, @1.first_column);}
+    | tlength '(' EXP ')' {$$ = new FuncionLenguaje($1, $3, @1.first_line, @1.first_column);}   
 ;
 
 EXP :   EXP '+' EXP                     { $$ = new OperacionAritmetica($1, $2, $3, @2.first_line, @2.first_column);}
@@ -474,13 +488,18 @@ EXP :   EXP '+' EXP                     { $$ = new OperacionAritmetica($1, $2, $
     |   id '[' EXP ']'                  { $$ = new AccesoVector($1, $3,@1.first_line, @1.first_column);        }
     |   id  '[' '[' EXP ']' ']'         { $$ = new AccesoLista($1, $4, @1.first_line, @1.first_column);}
     |   LLAMADA_FUNCION                 { $$ = $1;}
-    |   entero                          { $$ = new Valor($1, "integer", @1.first_line, @1.first_column);}
+    |   TERNARIA                        { $$ = $1;}
+    |   CASTEO                          { $$ = $1;}
+    |   FUNCION_LENGUAJE              { $$ = $1;}
+    |   PRIMITIVO                      { $$ = $1;}
+    |   error {   TablaError.insertarError(new Error("Sintactico", `Error a nivel expresion despues de: "${yytext}" no cumplio o no entra dentro de la gramatica expresion`,this._$.first_line, this._$.first_column));     }
+;
+
+PRIMITIVO:   entero                          { $$ = new Valor($1, "integer", @1.first_line, @1.first_column);}
     |   decimal                         { $$ = new Valor($1, "double", @1.first_line, @1.first_column); }
     |   caracter                        { $$ = new Valor($1, "char", @1.first_line, @1.first_column);   }
     |   cadena                          { $$ = new Valor($1, "string", @1.first_line, @1.first_column); }
     |   ttrue                           { $$ = new Valor($1, "true", @1.first_line, @1.first_column);   }
     |   tfalse                          { $$ = new Valor($1, "false", @1.first_line, @1.first_column);  }
-    |   TERNARIA                        { $$ = $1;}
-    |   CASTEO                          { $$ = $1;}
-    |   FUNCIONES_LENGUAJE              { $$ = $1;}
 ;
+     

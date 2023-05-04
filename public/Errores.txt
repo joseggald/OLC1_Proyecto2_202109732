@@ -1,0 +1,26 @@
+digraph G {
+      node[shape=plaintext]
+      table [label=<<table border="1" cellspacing="0">
+          <tr><td>Tipo</td><td>Descripcion</td><td>Linea</td><td>Columna</td></tr>
+          undefined<tr><td>Sintactico</td><td>Error a nivel expresion despues de: "18.6" no cumplio o no entra dentro de la gramatica expresion</td><td>1</td><td>16</td></tr>
+<tr><td>Sintactico</td><td>Error a nivel expresion despues de: "print" no cumplio o no entra dentro de la gramatica expresion</td><td>2</td><td>0</td></tr>
+<tr><td>Sintactico</td><td>Error a nivel expresion despues de: "edad" no cumplio o no entra dentro de la gramatica expresion</td><td>2</td><td>6</td></tr>
+<tr><td>Sintactico</td><td>Error a nivel expresion despues de: ")" no cumplio o no entra dentro de la gramatica expresion</td><td>2</td><td>11</td></tr>
+<tr><td>Sintactico</td><td>Error a nivel expresion despues de: "char" no cumplio o no entra dentro de la gramatica expresion</td><td>4</td><td>0</td></tr>
+<tr><td>Sintactico</td><td>Error a nivel expresion despues de: "=" no cumplio o no entra dentro de la gramatica expresion</td><td>4</td><td>11</td></tr>
+<tr><td>Sintactico</td><td>Error a nivel expresion despues de: "char" no cumplio o no entra dentro de la gramatica expresion</td><td>4</td><td>14</td></tr>
+<tr><td>Sintactico</td><td>Error a nivel expresion despues de: "70" no cumplio o no entra dentro de la gramatica expresion</td><td>4</td><td>20</td></tr>
+<tr><td>Sintactico</td><td>Error a nivel expresion despues de: "print" no cumplio o no entra dentro de la gramatica expresion</td><td>5</td><td>0</td></tr>
+<tr><td>Sintactico</td><td>Error a nivel expresion despues de: "letra" no cumplio o no entra dentro de la gramatica expresion</td><td>5</td><td>6</td></tr>
+<tr><td>Sintactico</td><td>Error a nivel expresion despues de: ")" no cumplio o no entra dentro de la gramatica expresion</td><td>5</td><td>12</td></tr>
+<tr><td>Sintactico</td><td>Error a nivel expresion despues de: "double" no cumplio o no entra dentro de la gramatica expresion</td><td>7</td><td>0</td></tr>
+<tr><td>Sintactico</td><td>Error a nivel expresion despues de: "=" no cumplio o no entra dentro de la gramatica expresion</td><td>7</td><td>14</td></tr>
+<tr><td>Sintactico</td><td>Error a nivel expresion despues de: "double" no cumplio o no entra dentro de la gramatica expresion</td><td>7</td><td>17</td></tr>
+<tr><td>Sintactico</td><td>Error a nivel expresion despues de: "16" no cumplio o no entra dentro de la gramatica expresion</td><td>7</td><td>25</td></tr>
+<tr><td>Sintactico</td><td>Error a nivel expresion despues de: "print" no cumplio o no entra dentro de la gramatica expresion</td><td>8</td><td>0</td></tr>
+<tr><td>Sintactico</td><td>Error a nivel expresion despues de: "numero" no cumplio o no entra dentro de la gramatica expresion</td><td>8</td><td>6</td></tr>
+<tr><td>Sintactico</td><td>Error a nivel expresion despues de: ")" no cumplio o no entra dentro de la gramatica expresion</td><td>8</td><td>13</td></tr>
+<tr><td>Sintactico</td><td>Error a nivel expresion despues de: "" no cumplio o no entra dentro de la gramatica expresion</td><td>9</td><td>0</td></tr>
+
+      </table>>]
+  }

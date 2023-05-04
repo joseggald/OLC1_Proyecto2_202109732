@@ -7,6 +7,8 @@ import { Tipo } from "../Entorno/Simbolos/Tipo";
 import { TipoPrimitivo } from "../Entorno/Simbolos/TipoPrimitivo";
 import { Variable } from "../Entorno/Simbolos/Variable";
 import { AccesoVector } from "../Expresiones/AccesoVector";
+import { Symbol } from "../Tabla/Symbol";
+import { Tabla } from "../Tabla/Tabla";
 
 export class DeclararVariable extends Instruccion{
     
@@ -49,5 +51,26 @@ export class DeclararVariable extends Instruccion{
         }
         let nueva_var = new Variable(this.tipo, this.id, res);
         actual.insertarVariable(this.id,nueva_var);
+        Tabla.insertarSimbolo(new Symbol(this.id, "Variable", this.establecerTipo(), (this.linea).toString(), (this.columna).toString()));
+    }
+    private establecerTipo(){
+        let valor = this.tipo.getPrimitivo();
+    
+        switch (valor) {
+            case 0:
+                return "Entero"
+            case 1: 
+                return "Double"
+            case 2:
+                return "Char"
+            case 3: 
+                return "String"
+            case 4: 
+                return "Null"
+            case 5: 
+                return "Boolean"
+            case 6: 
+                return "Void"
+        }
     }
 }

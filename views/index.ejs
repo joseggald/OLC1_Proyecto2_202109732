@@ -22,7 +22,58 @@
      <script src="/codemirror/addon/selection/active-line.js"></script>
 </head>
 <body>
-	<h1>TypeWise</h1>
+	<h1>TypeWise - Proyecto No. 2 OLC1</h1>
+    <nav id="barra-navegacion" class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <div class="container-fluid">
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
+                aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item dropdown">
+                        <a class="nav-link">
+                            <button id="btn-abrir-archivo"  class="btn btn-outline-success m-3">Abrir Archivo</button>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link">
+                            <form method="POST" action="/arbol">
+                                <button type="submit" class="btn btn-outline-success m-3">Arbol AST D3</button>
+                            </form>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link">
+                            <form method="POST" action="/arbol2">
+                                <button type="submit" class="btn btn-outline-success m-3">Arbol AST Graphviz</button>
+                            </form>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link">
+                            <form method="POST" action="/simbolos">
+                                <button type="submit" class="btn btn-outline-success m-3">Tabla de simbolos</button>
+                            </form>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link">
+                            <form method="POST" action="/errores">
+                                <button type="submit" class="btn btn-outline-success m-3">Tabla de errores</button>
+                            </form>
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link">
+                            <button id="btn-limpiar"  class="btn btn-outline-danger m-3">Limpiar editor.</button>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
     <div class="row">
         <div class="col-6"><h2>Entrada</h2></div>
         <div class="col-5"><h2>Salida</h2></div>
@@ -33,9 +84,7 @@
                 <button type="submit" class="btn btn-outline-success m-3">Ejecutar</button>
                 <textarea  id="editor" name="codigo"><%= codigo %></textarea>
             </form>
-            <form method="POST" action="/arbol">
-                <button type="submit" class="btn btn-outline-success m-3">Arbol</button>
-            </form>
+ 
         </div>
         <div class="col-6">     
             <div class="row">
@@ -45,11 +94,11 @@
             </div>
         </div>   
     </div>
-    <img id="img" src='<%= svgString %>''>
+    
           
     </div>
     <script>
-        let editor = CodeMirror.fromTextArea(document.getElementById("editor"),{
+        var editor = CodeMirror.fromTextArea(document.getElementById("editor"),{
                     lineNumbers         : true,
                     mode                : "text/x-java",
                     theme               : "midnight",
@@ -58,6 +107,26 @@
                     styleActiveLine     : true
                 });
         editor.setSize("700","500");
+
+        document.getElementById("btn-abrir-archivo").addEventListener("click", function () {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.tw';
+                input.onchange = (event) => {
+                    const file = event.target.files[0];
+                    const reader = new FileReader();
+                    reader.readAsText(file, 'UTF-8');
+                    reader.onload = (readerEvent) => {
+                        const content = readerEvent.target.result;
+                        editor.setValue(content);
+                    };
+                };
+                input.click();
+            });
+            document.getElementById("btn-limpiar").addEventListener("click", function () {
+                editor.setValue("");
+                
+            });
     </script>
 </body>
 </html>
